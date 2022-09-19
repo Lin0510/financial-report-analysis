@@ -590,3 +590,6 @@ function reset() {
   ic2Points.value = 0;
 }
 </script>
+<style>
+  
+</style>

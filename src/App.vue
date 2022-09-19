@@ -28,4 +28,8 @@ nav a {
 nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.form-check-label{
+  user-select: none;
+}
 </style>

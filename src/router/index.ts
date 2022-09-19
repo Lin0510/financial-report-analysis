@@ -1,21 +1,23 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/FinancialReportAnalysis.vue'
+import FinancialReport from '../components/FinancialReport.vue'
+import Moat from '../components/Moat.vue'
+import Risk from '../components/Risk.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/report',
     name: 'report',
-    component: HomeView
+    component: FinancialReport
   },
   {
     path: '/moat',
     name: 'moat',
-    component: () => import('../views/Moat.vue')
+    component: Moat
   },
   {
     path: '/risk',
     name: 'risk',
-    component: () => import('../views/Risk.vue')
+    component: Risk
   }
 ]
 
