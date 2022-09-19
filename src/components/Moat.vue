@@ -18,8 +18,8 @@
         <td rowspan="3" style=" vertical-align: middle;background-color: #E8EEFB;">1</td>
         <td rowspan="3" style=" vertical-align: middle;">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.brand_1" @click="brandGivePoint()"
-              type="checkbox" id="brand_1">
+            <input class="form-check-input" v-model="form.brand_1" @click="brandGivePoint()" type="checkbox"
+              id="brand_1">
             <label class="form-check-label" for="brand_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -41,8 +41,8 @@
         <td rowspan="2" style="vertical-align: middle; background-color: #E8EEFB;">1</td>
         <td rowspan="2" style="vertical-align: middle;">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.patent_1" @click="patentGivePoint()"
-              type="checkbox" id="patent_1">
+            <input class="form-check-input" v-model="form.patent_1" @click="patentGivePoint()" type="checkbox"
+              id="patent_1">
             <label class="form-check-label" for="patent_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -87,11 +87,13 @@
         <td style="background-color: #E8EEFB;">1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.conversionCost_1" @click="conversionCostGivePoint()" type="checkbox" id="conversionCost_1">
+            <input class="form-check-input" v-model="form.conversionCost_1" @click="conversionCostGivePoint()"
+              type="checkbox" id="conversionCost_1">
             <label class="form-check-label" for="conversionCost_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.conversionCost_2" type="checkbox" id="conversionCost_2" @click="conversionCostNoGivePoint()">
+            <input class="form-check-input" v-model="form.conversionCost_2" type="checkbox" id="conversionCost_2"
+              @click="conversionCostNoGivePoint()">
             <label class="form-check-label" for="conversionCost_2">不給分</label>
           </div>
         </td>
@@ -102,11 +104,13 @@
         <td style="background-color: #E8EEFB;">1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.networkEffect_1" @click="networkEffectGivePoint()" type="checkbox" id="networkEffect_1">
+            <input class="form-check-input" v-model="form.networkEffect_1" @click="networkEffectGivePoint()"
+              type="checkbox" id="networkEffect_1">
             <label class="form-check-label" for="networkEffect_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.networkEffect_2" type="checkbox" id="networkEffect_2" @click="networkEffectNoGivePoint()">
+            <input class="form-check-input" v-model="form.networkEffect_2" type="checkbox" id="networkEffect_2"
+              @click="networkEffectNoGivePoint()">
             <label class="form-check-label" for="networkEffect_2">不給分</label>
           </div>
         </td>
@@ -118,8 +122,8 @@
         <td rowspan="2" style="vertical-align: middle; background-color: #E8EEFB;">1</td>
         <td rowspan="2" style="vertical-align: middle;">
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.nicheMarket_1" @click="nicheMarketGivePoint()"
-              type="checkbox" id="nicheMarket_1">
+            <input class="form-check-input" v-model="form.nicheMarket_1" @click="nicheMarketGivePoint()" type="checkbox"
+              id="nicheMarket_1">
             <label class="form-check-label" for="nicheMarket_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -138,18 +142,23 @@
         <td style="background-color: #E8EEFB;">1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.confidence_1" @click="confidenceGivePoint()" type="checkbox" id="confidence_1">
+            <input class="form-check-input" v-model="form.confidence_1" @click="confidenceGivePoint()" type="checkbox"
+              id="confidence_1">
             <label class="form-check-label" for="confidence_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.confidence_2" type="checkbox" id="confidence_2" @click="confidenceNoGivePoint()">
+            <input class="form-check-input" v-model="form.confidence_2" type="checkbox" id="confidence_2"
+              @click="confidenceNoGivePoint()">
             <label class="form-check-label" for="confidence_2">不給分</label>
           </div>
         </td>
       </tr>
       <tr>
         <td></td>
-        <td></td>
+        <td> <button type="button" class="btn btn-primary" @click="reset()">
+            <font-awesome-icon icon="fa-rotate-left" />
+            Reset
+          </button></td>
         <td style="background-color: #F6B3BB;">總分</td>
         <td style="background-color: #F6B3BB;">{{ total }}</td>
         <td></td>
@@ -157,7 +166,6 @@
     </tbody>
 
   </table>
-  <button style="text-align: center;" type="button" class="btn btn-success" @click="reset()">Reset</button>
 </template>
   <script setup>
 import { reactive, ref } from "@vue/reactivity";
@@ -300,13 +308,13 @@ watch(form, () => {
 
 function count() {
   total.value =
-  brandPoints.value +
-  patentPoints.value +
-  costAdvantagePoints.value +
-  conversionCostPonits.value +
-  networkEffectPoints.value +
-  nicheMarketPoints.value +
-  confidencePoints.value;
+    brandPoints.value +
+    patentPoints.value +
+    costAdvantagePoints.value +
+    conversionCostPonits.value +
+    networkEffectPoints.value +
+    nicheMarketPoints.value +
+    confidencePoints.value;
 }
 
 function reset() {

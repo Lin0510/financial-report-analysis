@@ -72,8 +72,10 @@
       </tr>
     </tbody>
   </table>
-  <button style="text-align: center;" type="button" class="btn btn-success" @click="reset()">Reset</button>
-
+  <button style="text-align: center;" type="button" class="btn btn-primary" @click="reset()">
+    <font-awesome-icon icon="fa-rotate-left"/>
+    Reset
+  </button>
 </template>
   <script setup>
 import { reactive, ref } from "@vue/reactivity";

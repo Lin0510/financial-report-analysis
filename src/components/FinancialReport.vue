@@ -272,7 +272,12 @@
         <td></td>
         <td style="background-color: #F6B3BB;">總分</td>
         <td style="background-color: #F6B3BB;">{{ total }}</td>
-        <td><button type="button" class="btn btn-success" @click="reset()">Reset</button></td>
+        <td>
+          <button style="text-align: center;" type="button" class="btn btn-primary" @click="reset()">
+            <font-awesome-icon icon="fa-rotate-left" />
+            Reset
+          </button>
+        </td>
         <td>
         </td>
       </tr>
@@ -591,5 +596,7 @@ function reset() {
 }
 </script>
 <style>
-  
+td a {
+  text-decoration: none;
+}
 </style>
