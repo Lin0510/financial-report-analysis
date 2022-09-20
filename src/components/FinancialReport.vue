@@ -80,8 +80,7 @@
             <label class="form-check-label" for="eps_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a href="https://stockrow.com/AAPL/financials/income/quarterly"
-            target="_blank">stockrow
+        <td style="background-color: #E8EEFB;"><a href="https://stockrow.com/" target="_blank">stockrow
             Income</a></td>
       </tr>
       <tr>
@@ -598,5 +597,6 @@ function reset() {
 <style>
 td a {
   text-decoration: none;
+  color: rgba(46, 44, 44, 0.89);
 }
 </style>

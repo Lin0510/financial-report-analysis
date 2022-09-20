@@ -22,6 +22,7 @@ nav {
 nav a {
   font-weight: bold;
   text-decoration: none;
+  color: #aebad2;
 }
 
 nav a:focus {
@@ -46,7 +47,7 @@ a:active {
   position: relative;
   transition: 0.5s color ease;
 
-  color: #aebad2;
+  /* color: #aebad2; */
   /* font-size: 2.5em; */
 }
 a.before:before,
