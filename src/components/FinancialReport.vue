@@ -1,4 +1,33 @@
 <template>
+  <div class="container" v-if="!isEdit">
+    <div class="row justify-content-center">
+      <div class="col-md-3 col-sm-8">
+        <div class="input-group has-validation">
+          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="分析股票"
+            :class="{ 'is-invalid': isStockEmpty}" />
+          <div v-if="isStockEmpty" class="invalid-feedback">
+            {{ errorMessage }}
+          </div>
+        </div>
+        <div class="input-group-append">
+          <button class="btn btn-primary" @click="confirm">確認</button>
+          <button class="btn btn-secondary" @click="clear">清除</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-if="isEdit" class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-4 col-sm-8">
+        <div class="input-group">
+          <label class="input-group-text mr-2">目前分析股票：</label>
+          <input v-model="stock" disabled class="form-control" />
+          <button @click="edit()" class="btn btn-secondary ml-2">編輯</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <table class="table">
     <thead class="table-dark">
       <tr>
@@ -29,7 +58,7 @@
             <label class="form-check-label" for="divdend1_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a href="https://stockrow.com/" target="_blank">stockrow</a></td>
+        <td style="background-color: #E8EEFB;"><a :href="stockrowUrl" target="_blank">stockrow</a></td>
       </tr>
       <tr>
         <td style="background-color: #E8EEFB;">10年股息每年越發越多</td>
@@ -46,7 +75,7 @@
             <label class="form-check-label" for="divdend2_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a href="https://stockrow.com/" target="_blank">stockrow</a></td>
+        <td style="background-color: #E8EEFB;"><a :href="stockrowUrl" target="_blank">stockrow</a></td>
       </tr>
       <tr>
         <td style="background-color: #E8EEFB;">5年股息成長率 > 10年股息成長率</td>
@@ -63,7 +92,7 @@
             <label class="form-check-label" for="divdend3_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a href="https://www.gurufocus.com/new_index/"
+        <td style="background-color: #E8EEFB;"><a :href="gurufocusUrl"
             target="_blank">gurufocus</a></td>
       </tr>
       <tr>
@@ -80,7 +109,7 @@
             <label class="form-check-label" for="eps_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a href="https://stockrow.com/" target="_blank">stockrow
+        <td style="background-color: #E8EEFB;"><a :href="incomeUrl" target="_blank">stockrow
             Income</a></td>
       </tr>
       <tr>
@@ -100,7 +129,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Balance Sheet</a>
+          <a :href="balanceSheetUrl" target="_blank">stockrow Balance Sheet</a>
         </td>
       </tr>
       <tr>
@@ -118,7 +147,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -137,7 +166,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -155,7 +184,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -174,7 +203,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -192,7 +221,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -211,7 +240,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -229,7 +258,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://stockrow.com/" target="_blank">stockrow Metrics</a>
+          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
@@ -247,7 +276,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://www.morningstar.com/" target="_blank">Morningstar Key Ratio Data</a>
+          <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
         </td>
       </tr>
       <tr>
@@ -264,7 +293,7 @@
           </div>
         </td>
         <td style="background-color: #E8EEFB;">
-          <a href="https://www.morningstar.com/" target="_blank">Morningstar Key Ratio Data</a>
+          <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
         </td>
       </tr>
       <tr>
@@ -287,6 +316,8 @@
 <script setup>
 import { reactive, ref } from "@vue/reactivity";
 import { watch } from "@vue/runtime-core";
+import { useVuelidate } from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 
 let form = reactive({
   divdend1_1: "",
@@ -593,10 +624,74 @@ function reset() {
   ic1Points.value = 0;
   ic2Points.value = 0;
 }
+
+// =======================================================================
+// url
+const index = ref("https://stockrow.com/");
+const stockrowUrl = ref("");
+const incomeUrl = ref("");
+const balanceSheetUrl = ref("");
+const mertricsUrl = ref("");
+const gurufocusUrl = ref("");
+const morningStarUrl = ref("");
+// =======================================================================
+const stock = ref("");
+const isEdit = ref(false);
+const isStockEmpty = ref(false);
+const errorMessage = ref("");
+
+const rule = {
+  stock: { required },
+};
+const v$ = useVuelidate(rule, { stock });
+
+function confirm() {
+  if (stock.value === "") {
+    isStockEmpty.value = true;
+    errorMessage.value = "請輸入股票代碼";
+    return;
+  }
+
+  if (v$.value.$invalid) {
+    isStockEmpty.value = false;
+    errorMessage.value = "";
+    return;
+  }
+
+  isEdit.value = true;
+  stock.value = stock.value.toUpperCase();
+  isStockEmpty.value = false;
+  errorMessage.value = "";
+  // 修改url
+  stockrowUrl.value = index.value + stock.value;
+  incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
+  balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
+  mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
+  gurufocusUrl.value = "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
+  morningStarUrl.value = "https://www.morningstar.com/search?query=" + stock.value;
+}
+
+function clear() {
+  stock.value = "";
+}
+function edit() {
+  isEdit.value = false;
+}
+
+function restrictInput(event) {
+  const regex = /^[a-zA-Z.]*$/; // 正則表達式，只允許英文字母和點號
+  const inputValue = event.target.value;
+  if (!regex.test(inputValue)) {
+    this.stock = inputValue.replace(/[^a-zA-Z.]/g, "");
+  }
+}
 </script>
 <style>
 td a {
   text-decoration: none;
   color: rgba(46, 44, 44, 0.89);
+}
+.error-message {
+  white-space: nowrap;
 }
 </style>
