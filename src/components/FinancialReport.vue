@@ -627,13 +627,15 @@ function reset() {
 
 // =======================================================================
 // url
-const index = ref("https://stockrow.com/");
-const stockrowUrl = ref("");
-const incomeUrl = ref("");
-const balanceSheetUrl = ref("");
-const mertricsUrl = ref("");
-const gurufocusUrl = ref("");
-const morningStarUrl = ref("");
+const stockRowIndex = "https://stockrow.com/";
+const gurufocusIndex = "https://www.gurufocus.com/";
+const morningStarIndex = "https://www.morningstar.com/";
+const stockrowUrl = ref(stockRowIndex);
+const incomeUrl = ref(stockRowIndex);
+const balanceSheetUrl = ref(stockRowIndex);
+const mertricsUrl = ref(stockRowIndex);
+const gurufocusUrl = ref(gurufocusIndex);
+const morningStarUrl = ref(morningStarIndex);
 // =======================================================================
 const stock = ref("");
 const isEdit = ref(false);
@@ -663,7 +665,7 @@ function confirm() {
   isStockEmpty.value = false;
   errorMessage.value = "";
   // 修改url
-  stockrowUrl.value = index.value + stock.value;
+  stockrowUrl.value = stockRowIndex + stock.value;
   incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
   balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
   mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
