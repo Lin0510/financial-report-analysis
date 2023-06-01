@@ -60,7 +60,7 @@
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.divdend1_1" @click="divdend1GetPoint()" type="checkbox"
-              id="divdend1_1">
+              id="divdend1_1" :disabled="divdend1_1">
             <label class="form-check-label" for="divdend1_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -77,7 +77,7 @@
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.divdend2_1" @click="divdend2GetPoint()" type="checkbox"
-              id="divdend2_1">
+              id="divdend2_1" :disabled="divdend2_1">
             <label class="form-check-label" for="divdend2_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -166,7 +166,7 @@
         <td style="background-color: #E8EEFB;">1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe1_1" @click="roe1GetPoint()" type="checkbox" id="roe1_1">
+            <input class="form-check-input" v-model="form.roe1_1" @click="roe1GetPoint()" type="checkbox" id="roe1_1" :disabled="roe1_1">
             <label class="form-check-label" for="roe1_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -184,7 +184,7 @@
         <td style="background-color: #E8EEFB;">0.5</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe2_1" @click="roe2GetPoint()" type="checkbox" id="roe2_1">
+            <input class="form-check-input" v-model="form.roe2_1" @click="roe2GetPoint()" type="checkbox" id="roe2_1" :disabled="roe2_1">
             <label class="form-check-label" for="roe2_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -277,7 +277,7 @@
         <td style="background-color: #E8EEFB;">1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.ic1_1" @click="ic1GetPoint()" type="checkbox" id="ic1_1">
+            <input class="form-check-input" v-model="form.ic1_1" @click="ic1GetPoint()" type="checkbox" id="ic1_1" :disabled="ic1_1">
             <label class="form-check-label" for="ic1_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -294,7 +294,7 @@
         <td style="background-color: #E8EEFB;">0.5</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.ic2_1" @click="ic2GetPoint()" type="checkbox" id="ic2_1">
+            <input class="form-check-input" v-model="form.ic2_1" @click="ic2GetPoint()" type="checkbox" id="ic2_1" :disabled="ic2_1">
             <label class="form-check-label" for="ic2_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
@@ -377,7 +377,88 @@ let ic1Points = ref(0);
 let ic2Points = ref(0);
 let total = ref(0);
 
+// 二擇一
+let divdend1_1 = ref(false);
+let divdend2_1 = ref(false);
 // Divdend
+watch(
+  () => form.divdend1_1 ,
+  (newValue) => {
+    if (newValue) {
+      form.divdend2_2 = true;
+      divdend2_1.value = true;
+    } else {
+      divdend2_1.value = false;
+    }
+  }
+)
+
+watch(
+  () => form.divdend2_1 ,
+  (newValue) => {
+    if (newValue) {
+      form.divdend1_2 = true;
+      divdend1_1.value = true;
+    } else {
+      divdend1_1.value = false;
+    }
+  }
+)
+// ROE
+// 二擇一
+let roe1_1 = ref(false);
+let roe2_1 = ref(false);
+watch(
+  () => form.roe1_1 ,
+  (newValue) => {
+    if (newValue) {
+      form.roe2_2 = true;
+      roe2_1.value = true;
+    } else {
+      roe2_1.value = false;
+    }
+    console.log(newValue);
+  }
+)
+watch(
+  () => form.roe2_1 ,
+  (newValue) => {
+    if (newValue) {
+      form.roe1_2 = true;
+      roe1_1.value = true;
+    } else {
+      roe1_1.value = false;
+    }
+    console.log(newValue);
+  }
+)
+// IC
+let ic1_1 = ref(false);
+let ic2_1 = ref(false);
+watch(
+  () => form.ic1_1 ,
+  (newValue) => {
+    if (newValue) {
+      form.ic2_2 = true;
+      ic2_1.value = true;
+    } else {
+      ic2_1.value = false;
+    }
+  }
+)
+watch(
+  () => form.ic2_1 ,
+  (newValue) => {
+    if (newValue) {
+      form.ic1_2 = true;
+      ic1_1.value = true;
+    } else {
+      ic1_1.value = false;
+    }
+  }
+)
+// Divdend
+// 10年每年持續穩定發股息
 function divdend1GetPoint() {
   form.divdend1_2 = false;
   divdend1Points.value = 0.5;
@@ -390,7 +471,7 @@ function divdend1NotGetPoint() {
   form.divdend1_1 = false;
   divdend1Points.value = 0;
 }
-
+// 10年股息每年越發越多
 function divdend2GetPoint() {
   form.divdend2_2 = false;
   divdend2Points.value = 1;
