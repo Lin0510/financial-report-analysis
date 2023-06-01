@@ -4,7 +4,7 @@
       <div class="col-md-4 col-sm-10">
         <div class="input-group has-validation">
           <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="請輸入股票代碼，只能輸入英文字母和."
-            :class="{ 'is-invalid': isStockEmpty || !stockExsits}" :disabled="isDisabled" />
+            :class="{ 'is-invalid': isStockEmpty || !stockExsits}" :disabled="isDisabled" @keyup.enter="confirm()"/>
           <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
             {{ errorMessage }}
           </div>
