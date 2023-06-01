@@ -1,28 +1,41 @@
 <template>
   <div class="container" v-if="!isEdit">
     <div class="row justify-content-center">
-      <div class="col-md-3 col-sm-8">
+      <div class="col-md-3 col-sm-10">
         <div class="input-group has-validation">
-          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="分析股票"
-            :class="{ 'is-invalid': isStockEmpty}" />
+          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="分析股票代碼"
+            :class="{ 'is-invalid': isStockEmpty || !stockExsits}" :disabled="isDisabled" />
           <div v-if="isStockEmpty" class="invalid-feedback">
             {{ errorMessage }}
           </div>
+          <div v-if="!stockExsits" class="invalid-feedback">
+            查無股票代碼
+          </div>
         </div>
         <div class="input-group-append">
-          <button class="btn btn-primary" @click="confirm">確認</button>
-          <button class="btn btn-secondary" @click="clear">清除</button>
+          <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">確認</button>
+          <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">清除</button>
         </div>
       </div>
     </div>
   </div>
-  <div v-if="isEdit" class="container">
+  <div class="container" v-else>
     <div class="row justify-content-center">
-      <div class="col-md-4 col-sm-8">
-        <div class="input-group">
-          <label class="input-group-text mr-2">目前分析股票：</label>
-          <input v-model="stock" disabled class="form-control" />
-          <button @click="edit()" class="btn btn-secondary ml-2">編輯</button>
+      <div class="col-md-3 col-sm-8">
+        <div class="form-group">
+          <label for="stockLabel">分析股票代碼</label>
+          <input id="stockLabel" class="form-control" :value="stock" disabled />
+        </div>
+        <div class="form-group">
+          <label for="nameLabel">股票名稱</label>
+          <input id="nameLabel" class="form-control" :value="stockName" disabled />
+        </div>
+        <div class="form-group">
+          <label for="priceLabel">現在股價</label>
+          <input id="priceLabel" class="form-control" :value="stockPrice" disabled />
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary" @click="edit">編輯</button>
         </div>
       </div>
     </div>
@@ -40,7 +53,7 @@
         <th style="background-color: #AEBAD2;">評分標準</th>
         <th style="background-color: #AEBAD2;">給分標準</th>
         <th style="background-color: #AEBAD2;">給分</th>
-        <th style="background-color: #AEBAD2;">備註</th>
+        <th style="background-color: #AEBAD2;">網址</th>
       </tr>
       <tr>
         <th rowspan="3" style="vertical-align: middle; background-color: #AEBAD2;">Divdend 股息</th>
@@ -92,8 +105,7 @@
             <label class="form-check-label" for="divdend3_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a :href="gurufocusUrl"
-            target="_blank">gurufocus</a></td>
+        <td style="background-color: #E8EEFB;"><a :href="gurufocusUrl" target="_blank">gurufocus</a></td>
       </tr>
       <tr>
         <th scope="row" style="background-color: #AEBAD2;">EPS (Diluted) 每股盈餘</th>
@@ -636,10 +648,17 @@ const balanceSheetUrl = ref(stockRowIndex);
 const mertricsUrl = ref(stockRowIndex);
 const gurufocusUrl = ref(gurufocusIndex);
 const morningStarUrl = ref(morningStarIndex);
+// -------------------------------------------
+const alphavantageAPI = ref("");
 // =======================================================================
+// 股票代碼
 const stock = ref("");
+const stockName = ref("");
+const stockPrice = ref("");
+
 const isEdit = ref(false);
 const isStockEmpty = ref(false);
+const stockExsits = ref(true);
 const errorMessage = ref("");
 
 const rule = {
@@ -647,7 +666,7 @@ const rule = {
 };
 const v$ = useVuelidate(rule, { stock });
 
-function confirm() {
+async function confirm() {
   if (stock.value === "") {
     isStockEmpty.value = true;
     errorMessage.value = "請輸入股票代碼";
@@ -659,25 +678,64 @@ function confirm() {
     errorMessage.value = "";
     return;
   }
+  // 查詢股票名稱
+  const response = await fetch(
+    `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stock.value}&apikey=8FYMDC697PL6LEEL`
+  );
+  const data = await response.json();
+  if (data.bestMatches && data.bestMatches.length > 0) {
+    stockExsits.value = true;
+    const matches = data.bestMatches;
+    const name = matches[0]["2. name"];
+    stockName.value = name;
+  } else {
+    // 處理data為空的情况
+    stockExsits.value = false;
+  }
 
-  isEdit.value = true;
-  stock.value = stock.value.toUpperCase();
-  isStockEmpty.value = false;
-  errorMessage.value = "";
-  // 修改url
-  stockrowUrl.value = stockRowIndex + stock.value;
-  incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
-  balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
-  mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
-  gurufocusUrl.value = "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
-  morningStarUrl.value = "https://www.morningstar.com/search?query=" + stock.value;
+  if (stockExsits.value) {
+    // 查詢股價
+    const response = await fetch(
+      `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.value}&apikey=LP46XK632CAP8PVK`
+    );
+    const data = await response.json();
+    console.log(data);
+    console.log(data["Global Quote"]);
+
+    // 取出股票的價格
+    if (data["Global Quote"]) {
+      const price = data["Global Quote"]["05. price"];
+      stockPrice.value = price;
+    }
+
+    // 修改url
+    stockrowUrl.value = stockRowIndex + stock.value;
+    incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
+    balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
+    mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
+    gurufocusUrl.value =
+      "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
+    morningStarUrl.value =
+      "https://www.morningstar.com/search?query=" + stock.value;
+
+    isEdit.value = true;
+    stock.value = stock.value.toUpperCase();
+    isStockEmpty.value = false;
+    errorMessage.value = "";
+  }
 }
 
 function clear() {
   stock.value = "";
+  stockName.value = "";
+  stockPrice.value = "";
+  isStockEmpty.value = false;
+  stockExsits.value = true;
 }
 function edit() {
   isEdit.value = false;
+  stockName.value = "";
+  stockPrice.value = "";
 }
 
 function restrictInput(event) {
