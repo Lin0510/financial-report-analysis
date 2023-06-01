@@ -1,15 +1,12 @@
 <template>
   <div class="container" v-if="!isEdit">
     <div class="row justify-content-center">
-      <div class="col-md-3 col-sm-10">
+      <div class="col-md-4 col-sm-10">
         <div class="input-group has-validation">
-          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="分析股票代碼"
+          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="請輸入股票代碼，只能輸入英文字母和."
             :class="{ 'is-invalid': isStockEmpty || !stockExsits}" :disabled="isDisabled" />
-          <div v-if="isStockEmpty" class="invalid-feedback">
+          <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
             {{ errorMessage }}
-          </div>
-          <div v-if="!stockExsits" class="invalid-feedback">
-            查無股票代碼
           </div>
         </div>
         <div class="input-group-append">
@@ -21,7 +18,7 @@
   </div>
   <div class="container" v-else>
     <div class="row justify-content-center">
-      <div class="col-md-3 col-sm-8">
+      <div class="col-md-4 col-sm-8">
         <div class="form-group">
           <label for="stockLabel">分析股票代碼</label>
           <input id="stockLabel" class="form-control" :value="stock" disabled />
@@ -32,7 +29,8 @@
         </div>
         <div class="form-group">
           <label for="priceLabel">現在股價</label>
-          <input id="priceLabel" class="form-control" :value="stockPrice" disabled />
+          <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice" disabled />
+
         </div>
         <div class="text-center">
           <button class="btn btn-primary" @click="edit">編輯</button>
@@ -653,12 +651,20 @@ const alphavantageAPI = ref("");
 // =======================================================================
 // 股票代碼
 const stock = ref("");
+// 股票名稱
 const stockName = ref("");
+// 股票價格
 const stockPrice = ref("");
 
+// 是否切換編輯
 const isEdit = ref(false);
+// 股票代碼是否未填
 const isStockEmpty = ref(false);
+// 股票代碼是否存在
 const stockExsits = ref(true);
+// 查詢次數是否達上限
+const isCallLimitReached = ref(false);
+// 錯誤訊息
 const errorMessage = ref("");
 
 const rule = {
@@ -678,11 +684,16 @@ async function confirm() {
     errorMessage.value = "";
     return;
   }
+  let stockCode = stock.value;
+  if (stock.value.includes(".")) {
+    stockCode = stock.value.replace(".", "-");
+  }
   // 查詢股票名稱
   const response = await fetch(
-    `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stock.value}&apikey=8FYMDC697PL6LEEL`
+    `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stockCode}&apikey=8FYMDC697PL6LEEL`
   );
   const data = await response.json();
+
   if (data.bestMatches && data.bestMatches.length > 0) {
     stockExsits.value = true;
     const matches = data.bestMatches;
@@ -691,6 +702,7 @@ async function confirm() {
   } else {
     // 處理data為空的情况
     stockExsits.value = false;
+    errorMessage.value = "查無股票代碼";
   }
 
   if (stockExsits.value) {
@@ -699,8 +711,12 @@ async function confirm() {
       `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.value}&apikey=LP46XK632CAP8PVK`
     );
     const data = await response.json();
-    console.log(data);
-    console.log(data["Global Quote"]);
+
+    // 如果有Note代表一分鐘查詢超過五次了
+    if (data["Note"]) {
+      isCallLimitReached.value = true;
+      stockPrice.value = "每分鐘最多查詢5次，請稍後再試";
+    }
 
     // 取出股票的價格
     if (data["Global Quote"]) {
