@@ -826,8 +826,36 @@ async function confirm() {
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
       gurufocusUrl.value =
         "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
-      morningStarUrl.value =
-        "https://www.morningstar.com/search?query=" + stock.value;
+      // 查詢morningStar網址是xnas還是xnys
+            function checkURL(url) {
+        return fetch("/api" + url, { method: "HEAD" })
+          .then((response) => {
+            if (response.ok) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .catch((error) => {
+            morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+            console.error(error);
+          });
+      }
+
+      const url1 = `/xnas/${stock.value}/valuation`;
+
+      checkURL(url1)
+        .then((result) => {
+          if (result) {
+            morningStarUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/valuation`;
+          } else {
+            morningStarUrl.value = `https://www.morningstar.com/stocks/xnys/${stock.value}/valuation`;
+          }
+        })
+        .catch((error) => {
+          morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+          console.error(error);
+        });
 
       isEdit.value = true;
       stock.value = stock.value.toUpperCase();
