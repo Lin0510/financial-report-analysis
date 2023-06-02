@@ -843,6 +843,7 @@ function edit() {
   isCopied.value = false;
   stockName.value = "";
   stockPrice.value = "";
+  reset();
 }
 
 function restrictInput(event) {
