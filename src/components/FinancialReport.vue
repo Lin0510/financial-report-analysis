@@ -872,10 +872,10 @@ async function touchCopy() {
 // 一鍵開啟網址
 function openUrls() {
   window.open(stockrowUrl.value, "_blank");
+  window.open(gurufocusUrl.value, "_blank");
   window.open(incomeUrl.value, "_blank");
   window.open(balanceSheetUrl.value, "_blank");
   window.open(mertricsUrl.value, "_blank");
-  window.open(gurufocusUrl.value, "_blank");
   window.open(morningStarUrl.value, "_blank");
 }
 </script>
