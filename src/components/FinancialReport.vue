@@ -3,14 +3,17 @@
     <div class="row justify-content-center">
       <div class="col-md-4 col-sm-10">
         <div class="input-group has-validation">
-          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control" placeholder="請輸入股票代碼，只能輸入英文字母和."
-            :class="{ 'is-invalid': isStockEmpty || !stockExsits}" :disabled="isDisabled" @keyup.enter="confirm()"/>
+          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control"
+            placeholder="請輸入股票代碼，只能輸入英文字母和." :class="{ 'is-invalid': isStockEmpty || !stockExsits}"
+            :disabled="isDisabled" @keyup.enter="confirm()" />
           <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
             {{ errorMessage }}
           </div>
         </div>
-        <div class="input-group-append">
-          <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">確認</button>
+        <div class="input-group-append button-group">
+          <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">
+            <span v-if="isLoading" class="spinner-border spinner-border-sm" />
+            確認</button>
           <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">清除</button>
         </div>
       </div>
@@ -29,10 +32,18 @@
         </div>
         <div class="form-group">
           <label for="priceLabel">現在股價</label>
-          <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice" disabled />
-
+          <div class="input-group">
+            <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice"
+              disabled />
+            <div class="input-groutruep-append" style="padding: 0 0.5rem;">
+              <button class="btn" :class="{'btn-outline-secondary': !isCopied, 'btn-outline-success': isCopied}"
+                type="button" @click="touchCopy()">
+                {{ isCopied ? '已複製' : '複製' }}
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="text-center">
+        <div class="text-center button-group">
           <button class="btn btn-primary" @click="edit">編輯</button>
         </div>
       </div>
@@ -40,9 +51,13 @@
   </div>
 
   <table class="table">
-    <thead class="table-dark">
+    <thead>
       <tr>
-        <th>財報分析</th>
+        <th class="table-dark">財報分析</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th><button class="btn btn-outline-success btn-sm" @click="openUrls()">一鍵開啟財報網址</button></th>
       </tr>
     </thead>
     <tbody>
@@ -328,6 +343,7 @@ import { reactive, ref } from "@vue/reactivity";
 import { watch } from "@vue/runtime-core";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
+import useClipboard from "vue-clipboard3";
 
 let form = reactive({
   divdend1_1: "",
@@ -379,62 +395,62 @@ let total = ref(0);
 
 // Divdend
 watch(
-  () => form.divdend1_1 ,
+  () => form.divdend1_1,
   (newValue) => {
     if (newValue) {
       form.divdend2_2 = true;
       form.divdend2_1 = false;
     }
   }
-)
+);
 
 watch(
-  () => form.divdend2_1 ,
+  () => form.divdend2_1,
   (newValue) => {
     if (newValue) {
       form.divdend1_2 = true;
       form.divdend1_1 = false;
     }
   }
-)
+);
 // ROE
 watch(
-  () => form.roe1_1 ,
+  () => form.roe1_1,
   (newValue) => {
     if (newValue) {
       form.roe2_2 = true;
       form.roe2_1 = false;
     }
   }
-)
+);
 watch(
-  () => form.roe2_1 ,
+  () => form.roe2_1,
   (newValue) => {
     if (newValue) {
       form.roe1_2 = true;
       form.roe1_1 = false;
     }
   }
-)
+);
 // IC
 watch(
-  () => form.ic1_1 ,
+  () => form.ic1_1,
   (newValue) => {
     if (newValue) {
       form.ic2_2 = true;
       form.ic2_1 = false;
     }
   }
-)
+);
 watch(
-  () => form.ic2_1 ,
+  () => form.ic2_1,
   (newValue) => {
     if (newValue) {
       form.ic1_2 = true;
       form.ic1_1 = false;
     }
   }
-)
+);
 // Divdend
 // 10年每年持續穩定發股息
 function divdend1GetPoint() {
@@ -723,15 +739,21 @@ const isStockEmpty = ref(false);
 const stockExsits = ref(true);
 // 查詢次數是否達上限
 const isCallLimitReached = ref(false);
+// 是否loading
+const isLoading = ref(false);
+const isDisabled = ref(false);
 // 錯誤訊息
 const errorMessage = ref("");
-
+// 輸入框規則
 const rule = {
   stock: { required },
 };
 const v$ = useVuelidate(rule, { stock });
 
 async function confirm() {
+  isLoading.value = true;
+  isDisabled.value = true;
+
   if (stock.value === "") {
     isStockEmpty.value = true;
     errorMessage.value = "請輸入股票代碼";
@@ -747,56 +769,63 @@ async function confirm() {
   if (stock.value.includes(".")) {
     stockCode = stock.value.replace(".", "-");
   }
-  // 查詢股票名稱
-  const response = await fetch(
-    `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stockCode}&apikey=8FYMDC697PL6LEEL`
-  );
-  const data = await response.json();
-
-  if (data.bestMatches && data.bestMatches.length > 0) {
-    stockExsits.value = true;
-    const matches = data.bestMatches;
-    const name = matches[0]["2. name"];
-    stockName.value = name;
-  } else {
-    // 處理data為空的情况
-    stockExsits.value = false;
-    errorMessage.value = "查無股票代碼";
-  }
-
-  if (stockExsits.value) {
-    // 查詢股價
+  try {
+    // 查詢股票名稱
     const response = await fetch(
-      `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.value}&apikey=LP46XK632CAP8PVK`
+      `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stockCode}&apikey=8FYMDC697PL6LEEL`
     );
     const data = await response.json();
 
-    // 如果有Note代表一分鐘查詢超過五次了
-    if (data["Note"]) {
-      isCallLimitReached.value = true;
-      stockPrice.value = "每分鐘最多查詢5次，請稍後再試";
+    if (data.bestMatches && data.bestMatches.length > 0) {
+      stockExsits.value = true;
+      const matches = data.bestMatches;
+      const name = matches[0]["2. name"];
+      stockName.value = name;
+    } else {
+      // 處理data為空的情况
+      stockExsits.value = false;
+      errorMessage.value = "查無股票代碼";
     }
 
-    // 取出股票的價格
-    if (data["Global Quote"]) {
-      const price = data["Global Quote"]["05. price"];
-      stockPrice.value = price;
+    if (stockExsits.value) {
+      // 查詢股價
+      const response = await fetch(
+        `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.value}&apikey=LP46XK632CAP8PVK`
+      );
+      const data = await response.json();
+
+      // 如果有Note代表一分鐘查詢超過五次了
+      if (data["Note"]) {
+        isCallLimitReached.value = true;
+        stockPrice.value = "每分鐘最多查詢5次，請稍後再試";
+      }
+
+      // 取出股票的價格
+      if (data["Global Quote"]) {
+        const price = data["Global Quote"]["05. price"];
+        stockPrice.value = price;
+      }
+
+      // 修改url
+      stockrowUrl.value = stockRowIndex + stock.value;
+      incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
+      balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
+      mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
+      gurufocusUrl.value =
+        "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
+      morningStarUrl.value =
+        "https://www.morningstar.com/search?query=" + stock.value;
+
+      isEdit.value = true;
+      stock.value = stock.value.toUpperCase();
+      isStockEmpty.value = false;
+      errorMessage.value = "";
     }
-
-    // 修改url
-    stockrowUrl.value = stockRowIndex + stock.value;
-    incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
-    balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
-    mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
-    gurufocusUrl.value =
-      "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
-    morningStarUrl.value =
-      "https://www.morningstar.com/search?query=" + stock.value;
-
-    isEdit.value = true;
-    stock.value = stock.value.toUpperCase();
-    isStockEmpty.value = false;
-    errorMessage.value = "";
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isLoading.value = false;
+    isDisabled.value = false;
   }
 }
 
@@ -820,6 +849,32 @@ function restrictInput(event) {
     this.stock = inputValue.replace(/[^a-zA-Z.]/g, "");
   }
 }
+
+// 複製
+const isCopied = ref(false);
+const { toClipboard } = useClipboard();
+
+async function touchCopy() {
+  try {
+    await toClipboard(stockPrice.value);
+    isCopied.value = true;
+    setTimeout(() => {
+      isCopied = false;
+    }, 2000);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// 一鍵開啟網址
+function openUrls() {
+  window.open(stockrowUrl.value, "_blank");
+  window.open(incomeUrl.value, "_blank");
+  window.open(balanceSheetUrl.value, "_blank");
+  window.open(mertricsUrl.value, "_blank");
+  window.open(gurufocusUrl.value, "_blank");
+  window.open(morningStarUrl.value, "_blank");
+}
 </script>
 <style>
 td a {
@@ -828,5 +883,10 @@ td a {
 }
 .error-message {
   white-space: nowrap;
+}
+
+.button-group button {
+  margin-top: 10px;
+  margin-right: 10px;
 }
 </style>
