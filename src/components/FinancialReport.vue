@@ -334,6 +334,18 @@
         <td>
         </td>
       </tr>
+      <tr>
+        <td />
+        <td />
+        <td id="copy">
+          <button class="btn" :class="{'btn-outline-dark': !isTotalCopied, 'btn-success': isTotalCopied}" type="button"
+            @click="touchCopyTotal()">
+            {{ isTotalCopied ? '已複製' : '複製總分' }}
+          </button>
+        </td>
+        <td />
+        <td />
+      </tr>
     </tbody>
   </table>
 
@@ -870,6 +882,23 @@ async function touchCopy() {
   }
 }
 
+const isTotalCopied = ref(false);
+async function touchCopyTotal() {
+  copyToClipboard();
+  isTotalCopied.value = true;
+  setTimeout(() => {
+    isTotalCopied.value = false;
+  }, 2000);
+}
+function copyToClipboard() {
+  const textarea = document.createElement("textarea");
+  textarea.value = total.value;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
+
 // 一鍵開啟網址
 function openUrls() {
   window.open(stockrowUrl.value, "_blank");
@@ -892,5 +921,10 @@ td a {
 .button-group button {
   margin-top: 10px;
   margin-right: 10px;
+}
+#copy {
+  width: 110px;
+  /* border: 1px solid #ccc; */
+  /* padding: 10px; */
 }
 </style>
