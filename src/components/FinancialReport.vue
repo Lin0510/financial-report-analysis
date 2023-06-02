@@ -751,9 +751,6 @@ const rule = {
 const v$ = useVuelidate(rule, { stock });
 
 async function confirm() {
-  isLoading.value = true;
-  isDisabled.value = true;
-
   if (stock.value === "") {
     isStockEmpty.value = true;
     errorMessage.value = "請輸入股票代碼";
@@ -765,11 +762,15 @@ async function confirm() {
     errorMessage.value = "";
     return;
   }
+
   let stockCode = stock.value;
   if (stock.value.includes(".")) {
     stockCode = stock.value.replace(".", "-");
   }
+
   try {
+    isLoading.value = true;
+    isDisabled.value = true;
     // 查詢股票名稱
     const response = await fetch(
       `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stockCode}&apikey=8FYMDC697PL6LEEL`
