@@ -836,9 +836,11 @@ function clear() {
   stockPrice.value = "";
   isStockEmpty.value = false;
   stockExsits.value = true;
+  isCopied.value = false;
 }
 function edit() {
   isEdit.value = false;
+  isCopied.value = false;
   stockName.value = "";
   stockPrice.value = "";
 }
@@ -860,7 +862,7 @@ async function touchCopy() {
     await toClipboard(stockPrice.value);
     isCopied.value = true;
     setTimeout(() => {
-      isCopied = false;
+      isCopied.value = false;
     }, 2000);
   } catch (error) {
     console.log(error);
