@@ -17,14 +17,17 @@
   user-select: none;
 }
 
+
 nav {
-  padding: 10px;
+  padding: 1x;
 }
 
 nav a {
   font-weight: bold;
   text-decoration: none;
-  color: #aebad2;
+  text-underline-offset: 3px;
+  color: rgba(0,0,0,.6);
+  font-size: 20px;
 }
 
 nav a:focus {
@@ -32,9 +35,12 @@ nav a:focus {
   color: #222831;
 }
 
-/* nav a.router-link-exact-active {
-  color: #17223F;
-} */
+nav a.router-link-exact-active {
+  color: #0A58CA;
+  /* text-decoration: underline;
+  text-decoration-color: #0abde3;
+  text-decoration-thickness: 3px; */
+}
 
 .form-check-label {
   user-select: none;
@@ -71,7 +77,7 @@ a.after:after {
   height: 5px;
   height: 0.15rem;
   width: 0;
-  background: #e8eefb;
+  background: #0abde3;
 }
 a.third:after,
 a.sixth:before,

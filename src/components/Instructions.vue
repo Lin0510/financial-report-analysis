@@ -15,11 +15,9 @@
       <section class="col-md-6">
         <h2>注意事項</h2>
         <p>
-          使用
-          <a class="custom-link" href="https://www.alphavantage.co/" target="_blank">
+          使用<a class="custom-link" href="https://www.alphavantage.co/" target="_blank">
             Alpha Vantage
-          </a>
-          提供的免費 API 查詢名稱與股價
+          </a>提供的免費 API 查詢名稱與股價
         </p>
         <p>限制：每分鐘最多 5 次查詢，每天最多 500 次查詢</p>
 
@@ -28,7 +26,7 @@
         <h2>使用方法</h2>
         <ol class="custom-list text-left">
           <li>
-            在輸入框中輸入要查詢的股票代碼，最多五個字元，只能輸入<b>英文字母和「.」</b>，其他字元無法輸入，例如：BRK.B 
+            在輸入框中輸入要查詢的股票代碼，英文大小寫都可以，最多五個字元，只能輸入<b>英文字母和「.」</b>，其他字元無法輸入，例如：BRK.B 
           </li>
           <li>
             點擊「確認」按鈕，此時會檢查欄位是否為空、股票代碼是否正確
@@ -76,10 +74,6 @@ p {
   text-decoration: none;
 }
 
-.custom-link:hover {
-  color: #0056b3;
-  text-decoration: underline;
-}
 
 .text-left {
   text-align: left;

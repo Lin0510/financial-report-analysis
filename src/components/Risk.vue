@@ -5,17 +5,17 @@
         <th>風險扣分</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <th style="background-color: #AEBAD2;">風險項目</th>
-        <th style="background-color: #AEBAD2;">風險可能性</th>
-        <th style="background-color: #AEBAD2;">需扣的分數</th>
-        <th style="background-color: #AEBAD2;">扣分</th>
+    <tbody class="r_body">
+      <tr class="title">
+        <th>風險項目</th>
+        <th>風險可能性</th>
+        <th>需扣的分數</th>
+        <th>扣分</th>
       </tr>
       <tr>
-        <th style="background-color: #AEBAD2;">科技風險</th>
-        <td style="background-color: #E8EEFB;">科技業、時尚潮流</td>
-        <td style="background-color: #E8EEFB;">-1</td>
+        <th>科技風險</th>
+        <td>科技業、時尚潮流</td>
+        <td>-1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.technologyRisk_1" @click="technologyRiskDeductPoint()"
@@ -30,9 +30,9 @@
         </td>
       </tr>
       <tr>
-        <th style="background-color: #AEBAD2;">政府風險</th>
-        <td style="background-color: #E8EEFB;">易受政策影響</td>
-        <td style="background-color: #E8EEFB;">-1</td>
+        <th>政府風險</th>
+        <td>易受政策影響</td>
+        <td>-1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.governmentRisk_1" @click="governmentRiskDeductPoint()"
@@ -47,9 +47,9 @@
         </td>
       </tr>
       <tr>
-        <th style="background-color: #AEBAD2;">中國風險</th>
-        <td style="background-color: #E8EEFB;">中國公司在美國掛牌</td>
-        <td style="background-color: #E8EEFB;">-1</td>
+        <th>中國風險</th>
+        <td>中國公司在美國掛牌</td>
+        <td>-1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.chinaRisk_1" @click="chinaRiskDeductPoint()" type="checkbox"
@@ -73,11 +73,11 @@
     </tbody>
   </table>
   <button style="text-align: center;" type="button" class="btn btn-primary" @click="reset()">
-    <font-awesome-icon icon="fa-rotate-left"/>
+    <font-awesome-icon icon="fa-rotate-left" />
     Reset
   </button>
 </template>
-  <script setup>
+<script setup>
 import { reactive, ref } from "@vue/reactivity";
 import { watch } from "@vue/runtime-core";
 
@@ -157,3 +157,22 @@ function reset() {
   chinaRiskPoint.value = 0;
 }
 </script>
+<style>
+.table .r_body tr:nth-child(2) th,
+.table .r_body tr:nth-child(3) th,
+.table .r_body tr:nth-child(4) th {
+  background-color: #aebad2;
+}
+
+.table .r_body tr:nth-child(2),
+.table .r_body tr:nth-child(3),
+.table .r_body tr:nth-child(4) {
+  background-color: rgb(232, 238, 251);
+}
+
+.table .r_body tr:nth-child(2) td:nth-child(4),
+.table .r_body tr:nth-child(3) td:nth-child(4),
+.table .r_body tr:nth-child(4) td:nth-child(4) {
+  background-color: #fff;
+}
+</style>

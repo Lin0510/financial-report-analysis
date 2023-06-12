@@ -5,18 +5,18 @@
         <th>護城河優勢</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <th style="background-color: #AEBAD2;">護城河項目</th>
-        <th style="background-color: #AEBAD2;">競爭優勢</th>
-        <th style="background-color: #AEBAD2;">可獲得分數</th>
-        <th style="background-color: #AEBAD2;">給分</th>
+    <tbody class="m_body">
+      <tr class="title">
+        <th>護城河項目</th>
+        <th>競爭優勢</th>
+        <th>可獲得分數</th>
+        <th>給分</th>
       </tr>
       <tr>
-        <th rowspan="3" style="vertical-align: middle; background-color: #AEBAD2;">品牌</th>
-        <td style="background-color: #E8EEFB;">你會因為這個品牌而購買嗎？</td>
-        <td rowspan="3" style=" vertical-align: middle;background-color: #E8EEFB;">1</td>
-        <td rowspan="3" style=" vertical-align: middle;">
+        <th rowspan="3">品牌</th>
+        <td>你會因為這個品牌而購買嗎？</td>
+        <td rowspan="3">1</td>
+        <td rowspan="3">
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.brand_1" @click="brandGivePoint()" type="checkbox"
               id="brand_1">
@@ -30,16 +30,16 @@
         </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">品牌會影響你的消費決策嗎？</td>
+        <td>品牌會影響你的消費決策嗎？</td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">你願意因為這個品牌多付一些錢嗎？</td>
+        <td>你願意因為這個品牌多付一些錢嗎？</td>
       </tr>
       <tr>
-        <th rowspan="2" style="vertical-align: middle; background-color: #AEBAD2;">專利、特許執照</th>
-        <td style="background-color: #E8EEFB;">專利：企業取得法律的保護，競爭者無法製造任何相似的產品</td>
-        <td rowspan="2" style="vertical-align: middle; background-color: #E8EEFB;">1</td>
-        <td rowspan="2" style="vertical-align: middle;">
+        <th rowspan="2">專利、特許執照</th>
+        <td>專利：企業取得法律的保護，競爭者無法製造任何相似的產品</td>
+        <td rowspan="2">1</td>
+        <td rowspan="2">
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.patent_1" @click="patentGivePoint()" type="checkbox"
               id="patent_1">
@@ -53,13 +53,13 @@
         </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">特許：擁有不易申請通過的政府許可經營執照</td>
+        <td>特許：擁有不易申請通過的政府許可經營執照</td>
       </tr>
       <tr>
-        <th rowspan="4" style="vertical-align: middle; background-color: #AEBAD2;">成本優勢</th>
-        <td style="background-color: #E8EEFB;">生產成本：擁有別人沒有的低生產成本或掌握通路</td>
-        <td rowspan="4" style="vertical-align: middle; background-color: #E8EEFB;">1</td>
-        <td rowspan="4" style="vertical-align: middle;">
+        <th rowspan="4">成本優勢</th>
+        <td>生產成本：擁有別人沒有的低生產成本或掌握通路</td>
+        <td rowspan="4">1</td>
+        <td rowspan="4">
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.costAdvantage_1" @click="costAdvantageGivePoint()"
               type="checkbox" id="costAdvantage_1">
@@ -73,18 +73,18 @@
         </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">運輸成本：有好的地理位置，降低運輸成本</td>
+        <td>運輸成本：有好的地理位置，降低運輸成本</td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">特有資產：擁有世界級的天然資源</td>
+        <td>特有資產：擁有世界級的天然資源</td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">經濟規模：規模是同業的5倍以上</td>
+        <td>經濟規模：規模是同業的5倍以上</td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">高轉換成本</th>
-        <td style="background-color: #E8EEFB;">轉換過程會產生大量風險或機會成本</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">高轉換成本</th>
+        <td>轉換過程會產生大量風險或機會成本</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.conversionCost_1" @click="conversionCostGivePoint()"
@@ -99,9 +99,9 @@
         </td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">網絡效應</th>
-        <td style="background-color: #E8EEFB;">產品價值隨著使用的人數上升而提升</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">網絡效應</th>
+        <td>產品價值隨著使用的人數上升而提升</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.networkEffect_1" @click="networkEffectGivePoint()"
@@ -117,10 +117,10 @@
       </tr>
 
       <tr>
-        <th rowspan="2" style="vertical-align: middle; background-color: #AEBAD2;">利基市場</th>
-        <td style="background-color: #E8EEFB;">在小市場有顯著規模</td>
-        <td rowspan="2" style="vertical-align: middle; background-color: #E8EEFB;">1</td>
-        <td rowspan="2" style="vertical-align: middle;">
+        <th rowspan="2">利基市場</th>
+        <td>在小市場有顯著規模</td>
+        <td rowspan="2">1</td>
+        <td rowspan="2">
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.nicheMarket_1" @click="nicheMarketGivePoint()" type="checkbox"
               id="nicheMarket_1">
@@ -134,12 +134,12 @@
         </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">地理壟斷</td>
+        <td>地理壟斷</td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">信心</th>
-        <td style="background-color: #E8EEFB;">認為還可以存在超過10年</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">信心</th>
+        <td>認為還可以存在超過10年</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.confidence_1" @click="confidenceGivePoint()" type="checkbox"
@@ -167,7 +167,7 @@
 
   </table>
 </template>
-  <script setup>
+<script setup>
 import { reactive, ref } from "@vue/reactivity";
 import { watch } from "@vue/runtime-core";
 
@@ -341,3 +341,41 @@ function reset() {
   confidencePoints.value = 0;
 }
 </script>
+<style>
+.table .m_body tr:nth-child(2) th,
+.table .m_body tr:nth-child(5) th,
+.table .m_body tr:nth-child(7) th,
+.table .m_body tr:nth-child(11) th,
+.table .m_body tr:nth-child(12) th,
+.table .m_body tr:nth-child(13) th,
+.table .m_body tr:nth-child(15) th {
+  background-color: #aebad2;
+}
+
+.table .m_body tr:nth-child(2),
+.table .m_body tr:nth-child(3),
+.table .m_body tr:nth-child(4),
+.table .m_body tr:nth-child(5),
+.table .m_body tr:nth-child(6),
+.table .m_body tr:nth-child(7),
+.table .m_body tr:nth-child(8),
+.table .m_body tr:nth-child(9),
+.table .m_body tr:nth-child(10),
+.table .m_body tr:nth-child(11),
+.table .m_body tr:nth-child(12),
+.table .m_body tr:nth-child(13),
+.table .m_body tr:nth-child(14),
+.table .m_body tr:nth-child(15) {
+  background-color: rgb(232, 238, 251);
+}
+
+.table .m_body tr:nth-child(2) td:nth-child(4),
+.table .m_body tr:nth-child(5) td:nth-child(4),
+.table .m_body tr:nth-child(7) td:nth-child(4),
+.table .m_body tr:nth-child(11) td:nth-child(4),
+.table .m_body tr:nth-child(12) td:nth-child(4),
+.table .m_body tr:nth-child(13) td:nth-child(4),
+.table .m_body tr:nth-child(15) td:nth-child(4) {
+  background-color: #fff;
+}
+</style>

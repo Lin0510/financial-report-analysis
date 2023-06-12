@@ -60,18 +60,18 @@
         <th><button class="btn btn-outline-success btn-sm" @click="openUrls()">一鍵開啟財報網址</button></th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <th style="background-color: #AEBAD2;">評分數據</th>
-        <th style="background-color: #AEBAD2;">評分標準</th>
-        <th style="background-color: #AEBAD2;">給分標準</th>
-        <th style="background-color: #AEBAD2;">給分</th>
-        <th style="background-color: #AEBAD2;">網址</th>
+    <tbody class="f_body">
+      <tr class="title">
+        <th>評分數據</th>
+        <th>評分標準</th>
+        <th>給分標準</th>
+        <th>給分</th>
+        <th>網址</th>
       </tr>
       <tr>
-        <th rowspan="3" style="vertical-align: middle; background-color: #AEBAD2;">Divdend 股息</th>
-        <td style="background-color: #E8EEFB;">10年每年持續穩定發股息</td>
-        <td style="background-color: #E8EEFB;">0.5</td>
+        <th rowspan="3">Divdend 股息</th>
+        <td>10年每年持續穩定發股息</td>
+        <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.divdend1_1" @click="divdend1GetPoint()" type="checkbox"
@@ -84,11 +84,13 @@
             <label class="form-check-label" for="divdend1_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a :href="stockrowUrl" target="_blank">stockrow</a></td>
+        <td rowspan="2" class="SMN_effect-15">
+          <a :href="stockrowUrl" target="_blank">stockrow</a>
+        </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">10年股息每年越發越多</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <td>10年股息每年越發越多</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.divdend2_1" @click="divdend2GetPoint()" type="checkbox"
@@ -101,11 +103,10 @@
             <label class="form-check-label" for="divdend2_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a :href="stockrowUrl" target="_blank">stockrow</a></td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">5年股息成長率 > 10年股息成長率</td>
-        <td style="background-color: #E8EEFB;">0.5</td>
+        <td>5年股息成長率 > 10年股息成長率</td>
+        <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.divdend3_1" @click="divdend3GetPoint()" type="checkbox"
@@ -118,12 +119,14 @@
             <label class="form-check-label" for="divdend3_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a :href="gurufocusUrl" target="_blank">gurufocus</a></td>
+        <td class="SMN_effect-15">
+          <a :href="gurufocusUrl" target="_blank">gurufocus</a>
+        </td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">EPS (Diluted) 每股盈餘</th>
-        <td style="background-color: #E8EEFB;">10年穩定成長</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">EPS (Diluted) 每股盈餘</th>
+        <td>10年穩定成長</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.eps_1" @click="epsGetPoint()" type="checkbox" id="eps_1">
@@ -134,13 +137,14 @@
             <label class="form-check-label" for="eps_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;"><a :href="incomeUrl" target="_blank">stockrow
-            Income</a></td>
+        <td class="SMN_effect-15">
+          <a :href="incomeUrl" target="_blank">stockrow Income</a>
+        </td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">Shares (Common) 流通股數</th>
-        <td style="background-color: #E8EEFB;">流通股數10年穩定減少</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">Shares (Common) 流通股數</th>
+        <td>流通股數10年穩定減少</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.shares_1" @click="sharesGetPoint()" type="checkbox"
@@ -153,14 +157,14 @@
             <label class="form-check-label" for="shares_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
+        <td class="SMN_effect-15">
           <a :href="balanceSheetUrl" target="_blank">stockrow Balance Sheet</a>
         </td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">Debt / Equity 負債權益比</th>
-        <td style="background-color: #E8EEFB;">D/E &lt; 0.5</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">Debt / Equity 負債權益比</th>
+        <td>D/E &lt; 0.5</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.de_1" @click="deGetPoint()" type="checkbox" id="de_1">
@@ -171,14 +175,14 @@
             <label class="form-check-label" for="de_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
+        <td rowspan="7" class="SMN_effect-15">
           <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
-        <th rowspan="2" style="vertical-align: middle; background-color: #AEBAD2;">ROE(％) 股東權益率</th>
-        <td style="background-color: #E8EEFB;">10年: 15% &lt; ROE &lt; 40%</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th rowspan="2">ROE(％) 股東權益率</th>
+        <td>10年: 15% &lt; ROE &lt; 40%</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.roe1_1" @click="roe1GetPoint()" type="checkbox" id="roe1_1">
@@ -190,13 +194,10 @@
             <label class="form-check-label" for="roe1_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-        </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">10年 ROE &lt; 15% 且穩定上升</td>
-        <td style="background-color: #E8EEFB;">0.5</td>
+        <td>10年 ROE &lt; 15% 且穩定上升</td>
+        <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.roe2_1" @click="roe2GetPoint()" type="checkbox" id="roe2_1">
@@ -208,14 +209,11 @@
             <label class="form-check-label" for="roe2_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-        </td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">Book Value Per Share 每股淨值</th>
-        <td style="background-color: #E8EEFB;">10年穩定成長</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">Book Value Per Share 每股淨值</th>
+        <td>10年穩定成長</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.bvps_1" @click="bvpsGetPoint()" type="checkbox" id="bvps_1">
@@ -227,14 +225,11 @@
             <label class="form-check-label" for="bvps_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-        </td>
       </tr>
       <tr>
-        <th scope="row" style="background-color: #AEBAD2;">Free Cash Flow 自由現金流</th>
-        <td style="background-color: #E8EEFB;">10年皆為正數</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th scope="row">Free Cash Flow 自由現金流</th>
+        <td>10年皆為正數</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.fcf_1" @click="fcfGetPoint()" type="checkbox" id="fcf_1">
@@ -245,14 +240,11 @@
             <label class="form-check-label" for="fcf_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-        </td>
       </tr>
       <tr>
-        <th rowspan="2" style="vertical-align: middle; background-color: #AEBAD2;">Net Margin(%)淨利率</th>
-        <td style="background-color: #E8EEFB;">10年 Net Margin > 10%</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th rowspan="2">Net Margin(%)淨利率</th>
+        <td>10年 Net Margin > 10%</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.net1_1" @click="net1GetPoint()" type="checkbox" id="net1_1">
@@ -264,13 +256,10 @@
             <label class="form-check-label" for="net1_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-        </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">10年穩定不衰退</td>
-        <td style="background-color: #E8EEFB;">0.5</td>
+        <td>10年穩定不衰退</td>
+        <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.net2_1" @click="net2GetPoint()" type="checkbox" id="net2_1">
@@ -282,14 +271,11 @@
             <label class="form-check-label" for="net2_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-        </td>
       </tr>
       <tr>
-        <th rowspan="2" style="vertical-align: middle; background-color: #AEBAD2;">IC 利息保障倍數</th>
-        <td style="background-color: #E8EEFB;">IC > 10 或 “-”</td>
-        <td style="background-color: #E8EEFB;">1</td>
+        <th rowspan="2">IC 利息保障倍數</th>
+        <td>IC > 10 或 “-”</td>
+        <td>1</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.ic1_1" @click="ic1GetPoint()" type="checkbox" id="ic1_1">
@@ -300,13 +286,13 @@
             <label class="form-check-label" for="ic1_2">不給分</label>
           </div>
         </td>
-        <td style="background-color: #E8EEFB;">
+        <td rowspan="2" class="SMN_effect-15">
           <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
         </td>
       </tr>
       <tr>
-        <td style="background-color: #E8EEFB;">IC > 5</td>
-        <td style="background-color: #E8EEFB;">0.5</td>
+        <td>IC > 5</td>
+        <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
             <input class="form-check-input" v-model="form.ic2_1" @click="ic2GetPoint()" type="checkbox" id="ic2_1">
@@ -316,9 +302,6 @@
             <input class="form-check-input" v-model="form.ic2_2" type="checkbox" id="ic2_2" @click="ic2NotGetPoint()">
             <label class="form-check-label" for="ic2_2">不給分</label>
           </div>
-        </td>
-        <td style="background-color: #E8EEFB;">
-          <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
         </td>
       </tr>
       <tr>
@@ -827,7 +810,7 @@ async function confirm() {
       gurufocusUrl.value =
         "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
       // 查詢morningStar網址是xnas還是xnys
-            function checkURL(url) {
+      function checkURL(url) {
         return fetch("/api" + url, { method: "HEAD" })
           .then((response) => {
             if (response.ok) {
@@ -938,10 +921,108 @@ function openUrls() {
 }
 </script>
 <style>
-td a {
-  text-decoration: none;
-  color: rgba(46, 44, 44, 0.89);
+td,
+th {
+  vertical-align: middle;
 }
+td a {
+  /* color: rgba(0, 0, 0, 0.8); */
+  color: #4F4F4F;
+  font-family: Lato;
+  font-size: 10pt;
+  font-weight: bold;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.SMN_effect-15 a:before,
+.SMN_effect-15 a:after {
+  display: inline-block;
+  opacity: 0;
+  -webkit-transition: -webkit-transform 0.3s, opacity 0.2s;
+  -moz-transition: -moz-transform 0.3s, opacity 0.2s;
+  transition: transform 0.3s, opacity 0.2s;
+}
+
+.SMN_effect-15 a:before {
+  margin-right: 10px;
+  content: "[";
+  -webkit-transform: translateX(20px);
+  -moz-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+.SMN_effect-15 a:after {
+  margin-left: 10px;
+  content: "]";
+  -webkit-transform: translateX(-20px);
+  -moz-transform: translateX(-20px);
+  transform: translateX(-20px);
+}
+
+.SMN_effect-15 a:hover:before,
+.SMN_effect-15 a:hover:after,
+.SMN_effect-15 a:focus:before,
+.SMN_effect-15 a:focus:after {
+  opacity: 1;
+  -webkit-transform: translateX(0px);
+  -moz-transform: translateX(0px);
+  transform: translateX(0px);
+}
+
+.title {
+  background-color: #aebad2;
+}
+
+.table .f_body tr:first-child th,
+.table .f_body tr:nth-child(2) th,
+.table .f_body tr:nth-child(5) th,
+.table .f_body tr:nth-child(6) th,
+.table .f_body tr:nth-child(7) th,
+.table .f_body tr:nth-child(8) th,
+.table .f_body tr:nth-child(10) th,
+.table .f_body tr:nth-child(11) th,
+.table .f_body tr:nth-child(12) th,
+.table .f_body tr:nth-child(14) th {
+  background-color: #aebad2;
+}
+
+.table .f_body tr:nth-child(2),
+.table .f_body tr:nth-child(3),
+.table .f_body tr:nth-child(4),
+.table .f_body tr:nth-child(5),
+.table .f_body tr:nth-child(6),
+.table .f_body tr:nth-child(7),
+.table .f_body tr:nth-child(8),
+.table .f_body tr:nth-child(9),
+.table .f_body tr:nth-child(10),
+.table .f_body tr:nth-child(11),
+.table .f_body tr:nth-child(12),
+.table .f_body tr:nth-child(13),
+.table .f_body tr:nth-child(14),
+.table .f_body tr:nth-child(15) {
+  background-color: rgb(232, 238, 251);
+}
+
+.table .f_body tr:nth-child(2) td:nth-child(4),
+.table .f_body tr:nth-child(3) td:nth-child(3),
+.table .f_body tr:nth-child(4) td:nth-child(3),
+.table .f_body tr:nth-child(5) td:nth-child(4),
+.table .f_body tr:nth-child(6) td:nth-child(4),
+.table .f_body tr:nth-child(7) td:nth-child(4),
+.table .f_body tr:nth-child(8) td:nth-child(4),
+.table .f_body tr:nth-child(9) td:nth-child(3),
+.table .f_body tr:nth-child(10) td:nth-child(4),
+.table .f_body tr:nth-child(11) td:nth-child(4),
+.table .f_body tr:nth-child(12) td:nth-child(4),
+.table .f_body tr:nth-child(13) td:nth-child(3),
+.table .f_body tr:nth-child(14) td:nth-child(4),
+.table .f_body tr:nth-child(15) td:nth-child(3) {
+  background-color: #fff;
+}
+
 .error-message {
   white-space: nowrap;
 }
