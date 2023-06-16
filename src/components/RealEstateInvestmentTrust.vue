@@ -53,14 +53,14 @@
   <table class="table">
     <thead>
       <tr>
-        <th class="table-dark">財報分析</th>
+        <th class="table-dark">[REITs] 評分標準</th>
         <th></th>
         <th></th>
         <th></th>
         <th><button class="btn btn-outline-success btn-sm" @click="openUrls()">一鍵開啟財報網址</button></th>
       </tr>
     </thead>
-    <tbody class="f_body">
+    <tbody class="reits_body">
       <tr class="title">
         <th>評分數據</th>
         <th>評分標準</th>
@@ -124,8 +124,8 @@
         </td>
       </tr>
       <tr>
-        <th scope="row">EPS (Diluted) 每股盈餘</th>
-        <td>10年穩定成長</td>
+        <th scope="row" style="color:red">EPS (Diluted) 每股盈餘</th>
+        <td style="color:red">10年穩定</td>
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
@@ -175,38 +175,23 @@
             <label class="form-check-label" for="de_2">不給分</label>
           </div>
         </td>
-        <td rowspan="7" class="SMN_effect-15">
+        <td rowspan="6" class="SMN_effect-15">
           <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
         </td>
       </tr>
       <tr>
-        <th rowspan="2">ROE(％) 股東權益率</th>
-        <td>10年: 15% &lt; ROE &lt; 40%</td>
+        <th style="color:red">ROE(％) 股東權益率</th>
+        <td style="color:red">10年 ROE 穩定</td>
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe1_1" @click="roe1GetPoint()" type="checkbox" id="roe1_1">
-            <label class="form-check-label" for="roe1_1">給分</label>
+            <input class="form-check-input" v-model="form.roe_1" @click="roeGetPoint()" type="checkbox" id="roe_1">
+            <label class="form-check-label" for="roe_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe1_2" type="checkbox" id="roe1_2"
-              @click="roe1NotGetPoint()">
-            <label class="form-check-label" for="roe1_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>10年 ROE &lt; 15% 且穩定上升</td>
-        <td>0.5</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe2_1" @click="roe2GetPoint()" type="checkbox" id="roe2_1">
-            <label class="form-check-label" for="roe2_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe2_2" type="checkbox" id="roe2_2"
-              @click="roe2NotGetPoint()">
-            <label class="form-check-label" for="roe2_2">不給分</label>
+            <input class="form-check-input" v-model="form.roe_2" type="checkbox" id="roe_2"
+              @click="roeNotGetPoint()">
+            <label class="form-check-label" for="roe_2">不給分</label>
           </div>
         </td>
       </tr>
@@ -227,8 +212,8 @@
         </td>
       </tr>
       <tr>
-        <th scope="row">Free Cash Flow 自由現金流</th>
-        <td>10年皆為正數</td>
+        <th style="color:red" scope="row">Free Cash Flow 自由現金流</th>
+        <td style="color:red">10年皆為正數且越來越多</td>
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
@@ -270,6 +255,24 @@
               @click="net2NotGetPoint()">
             <label class="form-check-label" for="net2_2">不給分</label>
           </div>
+        </td>
+      </tr>
+      <tr>
+        <th style="color:red" scope="row">Funds From Operations (OCF)營運現金流</th>
+        <td style="color:red">10年皆為正數且越來越多</td>
+        <td>1</td>
+        <td>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" v-model="form.ffo_1" @click="ffoGetPoint()" type="checkbox" id="ffo_1">
+            <label class="form-check-label" for="ffo_1">給分</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" v-model="form.ffo_2" type="checkbox" id="ffo_2" @click="ffoNotGetPoint()">
+            <label class="form-check-label" for="ffo_2">不給分</label>
+          </div>
+        </td>
+        <td class="SMN_effect-15">
+          <a :href="marketWatchUrl" target="_blank">MarketWatch</a>
         </td>
       </tr>
       <tr>
@@ -353,14 +356,14 @@ let form = reactive({
   shares_2: "",
   de_1: "",
   de_2: "",
-  roe1_1: "",
-  roe1_2: "",
-  roe2_1: "",
-  roe2_2: "",
+  roe_1: "",
+  roe_2: "",
   bvps_1: "",
   bvps_2: "",
   fcf_1: "",
   fcf_2: "",
+  ffo_1: "",
+  ffo_2: "",
   net1_1: "",
   net1_2: "",
   net2_1: "",
@@ -378,10 +381,10 @@ let divdend3Points = ref(0);
 let epsPoints = ref(0);
 let sharesPoints = ref(0);
 let dePoints = ref(0);
-let roe1Points = ref(0);
-let roe2Points = ref(0);
+let roePoints = ref(0);
 let bvpsPoints = ref(0);
 let fcfPoints = ref(0);
+let ffoPoints = ref(0);
 let net1Points = ref(0);
 let net2Points = ref(0);
 let ic1Points = ref(0);
@@ -408,25 +411,7 @@ watch(
     }
   }
 );
-// ROE
-watch(
-  () => form.roe1_1,
-  (newValue) => {
-    if (newValue) {
-      form.roe2_2 = true;
-      form.roe2_1 = false;
-    }
-  }
-);
-watch(
-  () => form.roe2_1,
-  (newValue) => {
-    if (newValue) {
-      form.roe1_2 = true;
-      form.roe1_1 = false;
-    }
-  }
-);
+
 // IC
 watch(
   () => form.ic1_1,
@@ -530,31 +515,19 @@ function deNotGetPoint() {
 }
 
 // ROE
-function roe1GetPoint() {
-  form.roe1_2 = false;
-  roe1Points.value = 1;
-  if (form.roe1_1 == true) {
-    roe1Points.value = 0;
+function roeGetPoint() {
+  form.roe_2 = false;
+  roePoints.value = 1;
+  if (form.roe_1 == true) {
+    roePoints.value = 0;
   }
 }
 
-function roe1NotGetPoint() {
-  form.roe1_1 = false;
-  roe1Points.value = 0;
+function roeNotGetPoint() {
+  form.roe_1 = false;
+  roePoints.value = 0;
 }
 
-function roe2GetPoint() {
-  form.roe2_2 = false;
-  roe2Points.value = 0.5;
-  if (form.roe2_1 == true) {
-    roe2Points.value = 0;
-  }
-}
-
-function roe2NotGetPoint() {
-  form.roe2_1 = false;
-  roe2Points.value = 0;
-}
 
 // BVPS
 function bvpsGetPoint() {
@@ -583,6 +556,21 @@ function fcfNotGetPoint() {
   form.fcf_1 = false;
   fcfPoints.value = 0;
 }
+
+// FFO
+function ffoGetPoint() {
+  form.ffo_2 = false;
+  ffoPoints.value = 1;
+  if (form.ffo_1 == true) {
+    ffoPoints.value = 0;
+  }
+}
+
+function ffoNotGetPoint() {
+  form.ffo_1 = false;
+  ffoPoints.value = 0;
+}
+
 
 // Net Margin
 function net1GetPoint() {
@@ -650,10 +638,10 @@ function count() {
     epsPoints.value +
     sharesPoints.value +
     dePoints.value +
-    roe1Points.value +
-    roe2Points.value +
+    roePoints.value +
     bvpsPoints.value +
     fcfPoints.value +
+    ffoPoints.value +
     net1Points.value +
     net2Points.value +
     ic1Points.value +
@@ -673,14 +661,14 @@ function reset() {
   form.shares_2 = "";
   form.de_1 = "";
   form.de_2 = "";
-  form.roe1_1 = "";
-  form.roe1_2 = "";
-  form.roe2_1 = "";
-  form.roe2_2 = "";
+  form.roe_1 = "";
+  form.roe_2 = "";
   form.bvps_1 = "";
   form.bvps_2 = "";
   form.fcf_1 = "";
   form.fcf_2 = "";
+  form.ffo_1 = "";
+  form.ffo_2 = "";
   form.net1_1 = "";
   form.net1_2 = "";
   form.net2_1 = "";
@@ -695,10 +683,10 @@ function reset() {
   epsPoints.value = 0;
   sharesPoints.value = 0;
   dePoints.value = 0;
-  roe1Points.value = 0;
-  roe2Points.value = 0;
+  roePoints.value = 0;
   bvpsPoints.value = 0;
   fcfPoints.value = 0;
+  ffoPoints.value = 0;
   net1Points.value = 0;
   net2Points.value = 0;
   ic1Points.value = 0;
@@ -710,13 +698,16 @@ function reset() {
 const stockRowIndex = "https://stockrow.com/";
 const gurufocusIndex = "https://www.gurufocus.com/";
 const morningStarIndex = "https://www.morningstar.com/";
+const marketWatchIndex = "https://www.marketwatch.com/";
 const stockrowUrl = ref(stockRowIndex);
 const incomeUrl = ref(stockRowIndex);
 const balanceSheetUrl = ref(stockRowIndex);
 const mertricsUrl = ref(stockRowIndex);
 const gurufocusUrl = ref(gurufocusIndex);
 const morningStarUrl = ref(morningStarIndex);
+const marketWatchUrl = ref(marketWatchIndex);
 // -------------------------------------------
+// api
 const alphavantageAPI = ref("");
 // =======================================================================
 // 股票代碼
@@ -809,6 +800,7 @@ async function confirm() {
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
       gurufocusUrl.value =
         "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
+      marketWatchUrl.value = marketWatchIndex + "investing/stock/" + stock.value + "/financials/cash-flow";
       // 查詢morningStar網址是xnas還是xnys
       function checkURL(url) {
         return fetch("/api" + url, { method: "HEAD" })
@@ -917,12 +909,12 @@ function openUrls() {
   window.open(incomeUrl.value, "_blank");
   window.open(balanceSheetUrl.value, "_blank");
   window.open(mertricsUrl.value, "_blank");
+  window.open(marketWatchUrl.value, "_blank");
   window.open(morningStarUrl.value, "_blank");
 }
 
 
 const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1549258857&interval=1d&events=history&=hP2rOschxO0";
-period2()
 function period2() {
   const now = new Date();
   const unixTimestamp = Math.floor(now.getTime() / 1000);
@@ -982,53 +974,57 @@ td a {
 }
 
 .title {
-  background-color: #aebad2;
+  background-color: #F1C1C5;
 }
 
-.table .f_body tr:first-child th,
-.table .f_body tr:nth-child(2) th,
-.table .f_body tr:nth-child(5) th,
-.table .f_body tr:nth-child(6) th,
-.table .f_body tr:nth-child(7) th,
-.table .f_body tr:nth-child(8) th,
-.table .f_body tr:nth-child(10) th,
-.table .f_body tr:nth-child(11) th,
-.table .f_body tr:nth-child(12) th,
-.table .f_body tr:nth-child(14) th {
-  background-color: #aebad2;
+.table .reits_body tr:first-child th,
+.table .reits_body tr:nth-child(2) th,
+.table .reits_body tr:nth-child(5) th,
+.table .reits_body tr:nth-child(6) th,
+.table .reits_body tr:nth-child(7) th,
+.table .reits_body tr:nth-child(8) th,
+.table .reits_body tr:nth-child(9) th,
+.table .reits_body tr:nth-child(10) th,
+.table .reits_body tr:nth-child(11) th,
+.table .reits_body tr:nth-child(13) th,
+.table .reits_body tr:nth-child(14) th 
+{
+  background-color: #F1C1C5;
 }
 
-.table .f_body tr:nth-child(2),
-.table .f_body tr:nth-child(3),
-.table .f_body tr:nth-child(4),
-.table .f_body tr:nth-child(5),
-.table .f_body tr:nth-child(6),
-.table .f_body tr:nth-child(7),
-.table .f_body tr:nth-child(8),
-.table .f_body tr:nth-child(9),
-.table .f_body tr:nth-child(10),
-.table .f_body tr:nth-child(11),
-.table .f_body tr:nth-child(12),
-.table .f_body tr:nth-child(13),
-.table .f_body tr:nth-child(14),
-.table .f_body tr:nth-child(15) {
-  background-color: rgb(232, 238, 251);
+.table .reits_body tr:nth-child(2),
+.table .reits_body tr:nth-child(3),
+.table .reits_body tr:nth-child(4),
+.table .reits_body tr:nth-child(5),
+.table .reits_body tr:nth-child(6),
+.table .reits_body tr:nth-child(7),
+.table .reits_body tr:nth-child(8),
+.table .reits_body tr:nth-child(9),
+.table .reits_body tr:nth-child(10),
+.table .reits_body tr:nth-child(11),
+.table .reits_body tr:nth-child(12),
+.table .reits_body tr:nth-child(13),
+.table .reits_body tr:nth-child(14),
+.table .reits_body tr:nth-child(15) {
+  background-color: #eee7e7;
 }
 
-.table .f_body tr:nth-child(2) td:nth-child(4),
-.table .f_body tr:nth-child(3) td:nth-child(3),
-.table .f_body tr:nth-child(4) td:nth-child(3),
-.table .f_body tr:nth-child(5) td:nth-child(4),
-.table .f_body tr:nth-child(6) td:nth-child(4),
-.table .f_body tr:nth-child(7) td:nth-child(4),
-.table .f_body tr:nth-child(8) td:nth-child(4),
-.table .f_body tr:nth-child(9) td:nth-child(3),
-.table .f_body tr:nth-child(10) td:nth-child(4),
-.table .f_body tr:nth-child(11) td:nth-child(4),
-.table .f_body tr:nth-child(12) td:nth-child(4),
-.table .f_body tr:nth-child(13) td:nth-child(3),
-.table .f_body tr:nth-child(14) td:nth-child(4),
-.table .f_body tr:nth-child(15) td:nth-child(3) {
+.table .reits_body tr:nth-child(1) td:nth-child(3),
+.table .reits_body tr:nth-child(2) td:nth-child(4),
+.table .reits_body tr:nth-child(3) td:nth-child(3),
+.table .reits_body tr:nth-child(4) td:nth-child(3),
+.table .reits_body tr:nth-child(5) td:nth-child(4),
+.table .reits_body tr:nth-child(6) td:nth-child(4),
+.table .reits_body tr:nth-child(7) td:nth-child(4),
+.table .reits_body tr:nth-child(8) td:nth-child(4),
+.table .reits_body tr:nth-child(9) td:nth-child(4),
+.table .reits_body tr:nth-child(10) td:nth-child(4),
+.table .reits_body tr:nth-child(11) td:nth-child(4),
+.table .reits_body tr:nth-child(12) td:nth-child(3),
+.table .reits_body tr:nth-child(13) td:nth-child(4),
+.table .reits_body tr:nth-child(14) td:nth-child(4),
+.table .reits_body tr:nth-child(15) td:nth-child(3) 
+{
   background-color: #fff;
 }
 

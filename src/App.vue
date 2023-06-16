@@ -3,7 +3,8 @@
     <router-link to="/instructions" class="third after">使用說明</router-link> |
     <router-link to="/report" class="third after">財報分析</router-link> |
     <router-link to="/moat" class="third after">護城河優勢</router-link> |
-    <router-link to="/risk" class="third after">風險扣分</router-link>
+    <router-link to="/risk" class="third after">風險扣分</router-link> |
+    <router-link to="/reits" class="third after">REITs評分標準</router-link>
   </nav>
   <router-view />
 </template>
