@@ -424,10 +424,19 @@ watch(
 
 // 利息收入
 function calculate() {
-  ratio.value = `${(
+  const referenceValue = 50;
+  const value = (
     (netInterestIncome.value / totalRevenue.value) *
     100
-  ).toFixed(2)} %`;
+  ).toFixed(2);
+  ratio.value = `${value} %`;
+  if (value > referenceValue) {
+    form.iir_1 = true;
+    form.iir_2 = false;
+  } else {
+    form.iir_1 = false;
+    form.iir_2 = true;
+  }
 }
 
 // Divdend
