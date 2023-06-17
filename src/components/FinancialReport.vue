@@ -400,6 +400,7 @@ watch(
     if (newValue) {
       form.divdend2_2 = true;
       form.divdend2_1 = false;
+      divdend2Points.value = 0;
     }
   }
 );
@@ -410,6 +411,7 @@ watch(
     if (newValue) {
       form.divdend1_2 = true;
       form.divdend1_1 = false;
+      divdend1Points.value = 0;
     }
   }
 );
@@ -420,6 +422,7 @@ watch(
     if (newValue) {
       form.roe2_2 = true;
       form.roe2_1 = false;
+      roe2Points.value = 0;
     }
   }
 );
@@ -429,6 +432,7 @@ watch(
     if (newValue) {
       form.roe1_2 = true;
       form.roe1_1 = false;
+      roe1Points.value = 0;
     }
   }
 );
@@ -439,6 +443,7 @@ watch(
     if (newValue) {
       form.ic2_2 = true;
       form.ic2_1 = false;
+      ic2Points.value = 0;
     }
   }
 );
@@ -448,6 +453,7 @@ watch(
     if (newValue) {
       form.ic1_2 = true;
       form.ic1_1 = false;
+      ic1Points.value = 0;
     }
   }
 );
@@ -666,6 +672,9 @@ watch(form, () => {
 });
 
 function count() {
+  console.log("total:" + total.value);
+  console.log("divdend1Points:" + divdend1Points.value);
+  console.log("divdend2Points:" + divdend2Points.value);
   total.value =
     divdend1Points.value +
     divdend2Points.value +

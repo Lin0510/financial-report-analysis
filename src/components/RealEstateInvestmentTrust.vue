@@ -400,6 +400,7 @@ watch(
     if (newValue) {
       form.divdend2_2 = true;
       form.divdend2_1 = false;
+      divdend2Points.value = 0;
     }
   }
 );
@@ -410,6 +411,7 @@ watch(
     if (newValue) {
       form.divdend1_2 = true;
       form.divdend1_1 = false;
+      divdend1Points.value = 0;
     }
   }
 );
@@ -421,6 +423,7 @@ watch(
     if (newValue) {
       form.ic2_2 = true;
       form.ic2_1 = false;
+      ic2Points.value = 0;
     }
   }
 );
@@ -430,6 +433,7 @@ watch(
     if (newValue) {
       form.ic1_2 = true;
       form.ic1_1 = false;
+      ic1Points.value = 0;
     }
   }
 );
