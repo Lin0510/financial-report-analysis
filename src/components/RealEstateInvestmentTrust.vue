@@ -53,7 +53,7 @@
   <table class="table">
     <thead>
       <tr>
-        <th class="table-dark">[REITs] 評分標準</th>
+        <th class="table-dark">【REITs】評分標準</th>
         <th></th>
         <th></th>
         <th></th>
@@ -974,7 +974,7 @@ td a {
 }
 
 .title {
-  background-color: #F1C1C5;
+  background-color: #F6B3BB;
 }
 
 .table .reits_body tr:first-child th,
@@ -989,7 +989,7 @@ td a {
 .table .reits_body tr:nth-child(13) th,
 .table .reits_body tr:nth-child(14) th 
 {
-  background-color: #F1C1C5;
+  background-color: #F6B3BB;
 }
 
 .table .reits_body tr:nth-child(2),

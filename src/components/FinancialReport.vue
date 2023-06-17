@@ -35,7 +35,10 @@
           <div class="input-group">
             <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice"
               disabled />
-            <div class="input-groutruep-append" style="padding: 0 0.5rem;">
+              <div v-if="isCallLimitReached" class="invalid-feedback">
+              {{ stockPriceErrorMessage }}
+              </div>
+            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem;">
               <button class="btn" :class="{'btn-outline-secondary': !isCopied, 'btn-outline-success': isCopied}"
                 type="button" @click="touchCopy()">
                 {{ isCopied ? '已複製' : '複製' }}
@@ -56,7 +59,9 @@
         <th class="table-dark">財報分析</th>
         <th></th>
         <th></th>
-        <th></th>
+        <th>
+          <button class="btn btn-outline-danger btn-sm" @click="noDivdends()">不發股息</button>
+        </th>
         <th><button class="btn btn-outline-success btn-sm" @click="openUrls()">一鍵開啟財報網址</button></th>
       </tr>
     </thead>
@@ -446,6 +451,24 @@ watch(
     }
   }
 );
+
+function noDivdends() {
+  if (form.divdend1_2 || form.divdend2_2 || form.divdend3_2) {
+    form.divdend1_1 = false;
+    form.divdend2_1 = false;
+    form.divdend3_1 = false;
+    form.divdend1_2 = false;
+    form.divdend2_2 = false;
+    form.divdend3_2 = false;
+  } else {
+    form.divdend1_1 = false;
+    form.divdend2_1 = false;
+    form.divdend3_1 = false;
+    form.divdend1_2 = true;
+    form.divdend2_2 = true;
+    form.divdend3_2 = true;
+  }
+}
 // Divdend
 // 10年每年持續穩定發股息
 function divdend1GetPoint() {
@@ -739,6 +762,7 @@ const isLoading = ref(false);
 const isDisabled = ref(false);
 // 錯誤訊息
 const errorMessage = ref("");
+const stockPriceErrorMessage = ref("");
 // 輸入框規則
 const rule = {
   stock: { required },
@@ -793,7 +817,8 @@ async function confirm() {
       // 如果有Note代表一分鐘查詢超過五次了
       if (data["Note"]) {
         isCallLimitReached.value = true;
-        stockPrice.value = "每分鐘最多查詢5次，請稍後再試";
+        stockPrice.value = "";
+        stockPriceErrorMessage.value = "每分鐘最多查詢5次，請稍後再試";
       }
 
       // 取出股票的價格
@@ -866,6 +891,7 @@ function edit() {
   isCopied.value = false;
   stockName.value = "";
   stockPrice.value = "";
+  isCallLimitReached.value = false;
   reset();
 }
 
@@ -920,9 +946,9 @@ function openUrls() {
   window.open(morningStarUrl.value, "_blank");
 }
 
-
-const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1549258857&interval=1d&events=history&=hP2rOschxO0";
-period2()
+const yahooUrl =
+  "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1549258857&interval=1d&events=history&=hP2rOschxO0";
+period2();
 function period2() {
   const now = new Date();
   const unixTimestamp = Math.floor(now.getTime() / 1000);
@@ -936,7 +962,7 @@ th {
 }
 td a {
   /* color: rgba(0, 0, 0, 0.8); */
-  color: #4F4F4F;
+  color: #4f4f4f;
   font-family: Lato;
   font-size: 10pt;
   font-weight: bold;

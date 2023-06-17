@@ -4,7 +4,8 @@
     <router-link to="/report" class="third after">財報分析</router-link> |
     <router-link to="/moat" class="third after">護城河優勢</router-link> |
     <router-link to="/risk" class="third after">風險扣分</router-link> |
-    <router-link to="/reits" class="third after">REITs評分標準</router-link>
+    <router-link to="/reits" class="third after">REITs評分標準</router-link> |
+    <router-link to="/bank" class="third after">銀行股評分標準</router-link>
   </nav>
   <router-view />
 </template>
@@ -43,9 +44,9 @@ nav a.router-link-exact-active {
   text-decoration-thickness: 3px; */
 }
 
-.form-check-label {
+/* .form-check-label {
   user-select: none;
-}
+} */
 
 a,
 a:visited,

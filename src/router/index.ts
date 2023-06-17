@@ -4,7 +4,7 @@ import Moat from '../components/Moat.vue'
 import Risk from '../components/Risk.vue'
 import Instructions from '../components/Instructions.vue'
 import Reits from '../components/RealEstateInvestmentTrust.vue'
-
+import Bank from '../components/Bank.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/report',
@@ -30,6 +30,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/reits',
     name: 'reits',
     component: Reits
+  },  {
+    path: '/bank',
+    name: 'bank',
+    component: Bank
   }
 ]
 
