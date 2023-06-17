@@ -1,8 +1,8 @@
 <template>
-  
+
   <Modal v-model="closeableModal" closeable header="注意">
     <p>⛔注意⛔：銀行股本身業務較煩瑣，是一個靠錢賺錢的商業模式，建議新手可以先跳過銀行股，從民生用品股開始著手比較容易，除非你真的非常非常懂銀行業務，不然可以先跳過這個行業</p>
-  </Modal>  
+  </Modal>
   <div class="container" v-if="!isEdit">
     <button id="modalButton" @click="closeableModal = true" type="button" class="btn btn-warning mb-2">⚠️注意事項</button>
     <div class="row justify-content-center">
@@ -40,7 +40,10 @@
           <div class="input-group">
             <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice"
               disabled />
-            <div class="input-groutruep-append" style="padding: 0 0.5rem;">
+            <div v-if="isCallLimitReached" class="invalid-feedback">
+              {{ stockPriceErrorMessage }}
+            </div>
+            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem;">
               <button class="btn" :class="{'btn-outline-secondary': !isCopied, 'btn-outline-success': isCopied}"
                 type="button" @click="touchCopy()">
                 {{ isCopied ? '已複製' : '複製' }}
@@ -269,7 +272,7 @@
           <div class="calculate">
             <button @click="calculate()" type="button" class="btn btn-success">計算</button>
           </div>
-        
+
         </td>
         <td class="SMN_effect-15" rowspan="2">
           <a :href="morningStarFinancialsUrl" target="_blank">Morningstar Financials</a>
@@ -330,7 +333,7 @@ import { watch } from "@vue/runtime-core";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import useClipboard from "vue-clipboard3";
-import Modal from './Modal.vue'
+import Modal from "./Modal.vue";
 
 const closeableModal = ref(false);
 
@@ -688,6 +691,7 @@ const isLoading = ref(false);
 const isDisabled = ref(false);
 // 錯誤訊息
 const errorMessage = ref("");
+const stockPriceErrorMessage = ref("");
 // 輸入框規則
 const rule = {
   stock: { required },
@@ -742,7 +746,8 @@ async function confirm() {
       // 如果有Note代表一分鐘查詢超過五次了
       if (data["Note"]) {
         isCallLimitReached.value = true;
-        stockPrice.value = "每分鐘最多查詢5次，請稍後再試";
+        stockPrice.value = "";
+        stockPriceErrorMessage.value = "每分鐘最多查詢5次，請稍後再試";
       }
 
       // 取出股票的價格
@@ -756,8 +761,7 @@ async function confirm() {
       incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
       balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
-      gurufocusUrl.value =
-        "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
+      gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
       // 查詢morningStar網址是xnas還是xnys
       function checkURL(url) {
         return fetch("/api" + url, { method: "HEAD" })
@@ -775,9 +779,8 @@ async function confirm() {
           });
       }
 
-      const url1 = `/xnas/${stock.value}/valuation`;
-
-      checkURL(url1)
+      const xnas = `/xnas/${stock.value}/valuation`;
+      checkURL(xnas)
         .then((result) => {
           if (result) {
             morningStarUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/valuation`;
@@ -819,6 +822,7 @@ function edit() {
   isCopied.value = false;
   stockName.value = "";
   stockPrice.value = "";
+  isCallLimitReached.value = false;
   reset();
 }
 
@@ -948,7 +952,7 @@ td a {
 .table .b_body tr:nth-child(9) th,
 .table .b_body tr:nth-child(10) th,
 .table .b_body tr:nth-child(12) th {
-  background-color: #F6B3BB;
+  background-color: #f6b3bb;
 }
 
 .table .b_body tr:nth-child(2),
@@ -963,7 +967,7 @@ td a {
 .table .b_body tr:nth-child(11),
 .table .b_body tr:nth-child(12),
 .table .b_body tr:nth-child(13) {
-  background-color: #EEE7E7;
+  background-color: #eee7e7;
 }
 
 .table .b_body tr:nth-child(2) td:nth-child(4),

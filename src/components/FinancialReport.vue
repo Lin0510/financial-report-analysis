@@ -35,9 +35,9 @@
           <div class="input-group">
             <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice"
               disabled />
-              <div v-if="isCallLimitReached" class="invalid-feedback">
+            <div v-if="isCallLimitReached" class="invalid-feedback">
               {{ stockPriceErrorMessage }}
-              </div>
+            </div>
             <div v-else class="input-groutruep-append" style="padding: 0 0.5rem;">
               <button class="btn" :class="{'btn-outline-secondary': !isCopied, 'btn-outline-success': isCopied}"
                 type="button" @click="touchCopy()">
@@ -832,8 +832,8 @@ async function confirm() {
       incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
       balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
-      gurufocusUrl.value =
-        "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
+      gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
+
       // 查詢morningStar網址是xnas還是xnys
       function checkURL(url) {
         return fetch("/api" + url, { method: "HEAD" })
@@ -850,9 +850,8 @@ async function confirm() {
           });
       }
 
-      const url1 = `/xnas/${stock.value}/valuation`;
-
-      checkURL(url1)
+      const xnas = `/xnas/${stock.value}/valuation`;
+      checkURL(xnas)
         .then((result) => {
           if (result) {
             morningStarUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/valuation`;

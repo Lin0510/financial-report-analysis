@@ -35,7 +35,10 @@
           <div class="input-group">
             <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached}" :value="stockPrice"
               disabled />
-            <div class="input-groutruep-append" style="padding: 0 0.5rem;">
+            <div v-if="isCallLimitReached" class="invalid-feedback">
+              {{ stockPriceErrorMessage }}
+            </div>
+            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem;">
               <button class="btn" :class="{'btn-outline-secondary': !isCopied, 'btn-outline-success': isCopied}"
                 type="button" @click="touchCopy()">
                 {{ isCopied ? '已複製' : '複製' }}
@@ -189,8 +192,7 @@
             <label class="form-check-label" for="roe_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe_2" type="checkbox" id="roe_2"
-              @click="roeNotGetPoint()">
+            <input class="form-check-input" v-model="form.roe_2" type="checkbox" id="roe_2" @click="roeNotGetPoint()">
             <label class="form-check-label" for="roe_2">不給分</label>
           </div>
         </td>
@@ -528,7 +530,6 @@ function roeNotGetPoint() {
   roePoints.value = 0;
 }
 
-
 // BVPS
 function bvpsGetPoint() {
   form.bvps_2 = false;
@@ -570,7 +571,6 @@ function ffoNotGetPoint() {
   form.ffo_1 = false;
   ffoPoints.value = 0;
 }
-
 
 // Net Margin
 function net1GetPoint() {
@@ -730,6 +730,7 @@ const isLoading = ref(false);
 const isDisabled = ref(false);
 // 錯誤訊息
 const errorMessage = ref("");
+const stockPriceErrorMessage = ref("");
 // 輸入框規則
 const rule = {
   stock: { required },
@@ -784,7 +785,8 @@ async function confirm() {
       // 如果有Note代表一分鐘查詢超過五次了
       if (data["Note"]) {
         isCallLimitReached.value = true;
-        stockPrice.value = "每分鐘最多查詢5次，請稍後再試";
+        stockPrice.value = "";
+        stockPriceErrorMessage.value = "每分鐘最多查詢5次，請稍後再試";
       }
 
       // 取出股票的價格
@@ -798,9 +800,9 @@ async function confirm() {
       incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
       balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
-      gurufocusUrl.value =
-        "https://www.gurufocus.com/stock/" + stock.value + "/dividend";
-      marketWatchUrl.value = marketWatchIndex + "investing/stock/" + stock.value + "/financials/cash-flow";
+      gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
+      marketWatchUrl.value = `${marketWatchIndex}investing/stock/${stock.value}/financials/cash-flow`;
+
       // 查詢morningStar網址是xnas還是xnys
       function checkURL(url) {
         return fetch("/api" + url, { method: "HEAD" })
@@ -817,9 +819,8 @@ async function confirm() {
           });
       }
 
-      const url1 = `/xnas/${stock.value}/valuation`;
-
-      checkURL(url1)
+      const xnas = `/xnas/${stock.value}/valuation`;
+      checkURL(xnas)
         .then((result) => {
           if (result) {
             morningStarUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/valuation`;
@@ -858,6 +859,7 @@ function edit() {
   isCopied.value = false;
   stockName.value = "";
   stockPrice.value = "";
+  isCallLimitReached.value = false;
   reset();
 }
 
@@ -913,8 +915,8 @@ function openUrls() {
   window.open(morningStarUrl.value, "_blank");
 }
 
-
-const yahooUrl = "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1549258857&interval=1d&events=history&=hP2rOschxO0";
+const yahooUrl =
+  "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=0&period2=1549258857&interval=1d&events=history&=hP2rOschxO0";
 function period2() {
   const now = new Date();
   const unixTimestamp = Math.floor(now.getTime() / 1000);
@@ -928,7 +930,7 @@ th {
 }
 td a {
   /* color: rgba(0, 0, 0, 0.8); */
-  color: #4F4F4F;
+  color: #4f4f4f;
   font-family: Lato;
   font-size: 10pt;
   font-weight: bold;
@@ -974,7 +976,7 @@ td a {
 }
 
 .title {
-  background-color: #F6B3BB;
+  background-color: #f6b3bb;
 }
 
 .table .reits_body tr:first-child th,
@@ -987,9 +989,8 @@ td a {
 .table .reits_body tr:nth-child(10) th,
 .table .reits_body tr:nth-child(11) th,
 .table .reits_body tr:nth-child(13) th,
-.table .reits_body tr:nth-child(14) th 
-{
-  background-color: #F6B3BB;
+.table .reits_body tr:nth-child(14) th {
+  background-color: #f6b3bb;
 }
 
 .table .reits_body tr:nth-child(2),
@@ -1023,8 +1024,7 @@ td a {
 .table .reits_body tr:nth-child(12) td:nth-child(3),
 .table .reits_body tr:nth-child(13) td:nth-child(4),
 .table .reits_body tr:nth-child(14) td:nth-child(4),
-.table .reits_body tr:nth-child(15) td:nth-child(3) 
-{
+.table .reits_body tr:nth-child(15) td:nth-child(3) {
   background-color: #fff;
 }
 
