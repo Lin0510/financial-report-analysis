@@ -7,6 +7,16 @@ import Reits from '../components/RealEstateInvestmentTrust.vue'
 import Bank from '../components/Bank.vue'
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/',
+    name: 'home',
+    component: Instructions
+  },
+  {
+    path: '/instructions',
+    name: 'instructions',
+    component: Instructions
+  },
+  {
     path: '/report',
     name: 'report',
     component: FinancialReport
@@ -20,11 +30,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/risk',
     name: 'risk',
     component: Risk
-  },
-  {
-    path: '/instructions',
-    name: 'instructions',
-    component: Instructions
   },
   {
     path: '/reits',
