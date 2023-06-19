@@ -23,7 +23,6 @@
             IEX Cloud API
           </a>提供的免費 API 查詢公司名稱與股價
         </p>
-        <p>免費版本：每月最多 500 次查詢，提供基本的數據和指標</p>
 
       </section>
       <section class="col-md-7">

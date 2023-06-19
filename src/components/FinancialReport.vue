@@ -12,10 +12,12 @@
         </div>
         <div class="input-group-append button-group">
           <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">
-            <span v-if="isLoading" class="spinner-border spinner-border-sm" />
-            確認
+            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right:10px" />
+            <font-awesome-icon icon="fa-magnifying-glass" />
+            查詢
           </button>
           <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">
+            <font-awesome-icon icon="fa-eraser" />
             清除
           </button>
         </div>
@@ -37,22 +39,28 @@
           <label for="priceLabel">現在股價</label>
           <div class="input-group">
             <input id="priceLabel" class="form-control" :class="{ 'is-invalid': isCallLimitReached }"
-              :value="stockPrice + currency" disabled />
+              :value="stockPrice" disabled />
+            <span class="input-group-text">{{currency}}</span>
             <div v-if="isCallLimitReached" class="invalid-feedback">
               {{ stockPriceErrorMessage }}
             </div>
-            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem">
+            <div else class="input-groutruep-append" style="padding: 0 0.5rem">
               <button class="btn" :class="{
                   'btn-outline-secondary': !isCopied,
                   'btn-outline-success': isCopied,
                 }" type="button" @click="touchCopy()">
+                <font-awesome-icon v-if="isCopied" icon="fa-paste" />
+                <font-awesome-icon v-else icon="fa-clipboard" />
                 {{ isCopied ? "已複製" : "複製股價" }}
               </button>
             </div>
           </div>
         </div>
         <div class="text-center button-group">
-          <button class="btn btn-primary" @click="edit">編輯</button>
+          <button class="btn btn-primary" @click="edit">
+            <font-awesome-icon icon="fa-edit" />
+            編輯
+          </button>
         </div>
       </div>
     </div>
@@ -77,6 +85,7 @@
         </th>
         <th>
           <button class="btn btn-outline-success btn-sm" @click="openUrls()">
+            <font-awesome-icon icon="fa-window-restore" />
             一鍵開啟財報網址
           </button>
         </th>
@@ -342,8 +351,10 @@
         <td />
         <td />
         <td id="copy">
-          <button class="btn" :class="{ 'btn-outline-dark': !isTotalCopied, 'btn-success': isTotalCopied }"
+          <button class="btn btn-sm" :class="{ 'btn-outline-dark': !isTotalCopied, 'btn-success': isTotalCopied }"
             type="button" @click="touchCopyTotal()">
+            <font-awesome-icon v-if="isTotalCopied" icon="fa-paste" />
+            <font-awesome-icon v-else icon="fa-clipboard" />
             {{ isTotalCopied ? "已複製" : "複製總分" }}
           </button>
         </td>
@@ -482,7 +493,7 @@ function noDivdends() {
   form.divdend1_1 = false;
   form.divdend2_1 = false;
   form.divdend3_1 = false;
-  
+
   if (!form.divdend1_2 || !form.divdend2_2 || !form.divdend3_2) {
     form.divdend1_2 = true;
     form.divdend2_2 = true;
@@ -837,7 +848,7 @@ async function confirm() {
       stockExsits.value = true;
       stockName.value = data.companyName;
       stockPrice.value = data.latestPrice;
-      currency.value = ` ${data.currency}`;
+      currency.value = `${data.currency}`;
     }
 
     if (stockExsits.value) {
