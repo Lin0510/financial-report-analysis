@@ -332,7 +332,14 @@
         <td style="background-color: #f6b3bb">總分</td>
         <td style="background-color: #f6b3bb">{{ total }}</td>
         <td>
-          <button style="text-align: center" type="button" class="btn btn-primary" @click="reset()">
+          <button class="btn btn-sm" :class="{ 'btn-outline-dark': !isTotalCopied, 'btn-success': isTotalCopied }"
+            type="button" @click="touchCopyTotal()"
+            style="margin-right:7px">
+            <font-awesome-icon v-if="isTotalCopied" icon="fa-paste" />
+            <font-awesome-icon v-else icon="fa-clipboard" />
+            {{ isTotalCopied ? "已複製" : "複製總分" }}
+          </button>
+          <button type="button" class="btn btn-primary" @click="reset()">
             <font-awesome-icon icon="fa-rotate-left" />
             Reset
           </button>
@@ -342,14 +349,7 @@
       <tr>
         <td />
         <td />
-        <td id="copy">
-          <button class="btn btn-sm" :class="{ 'btn-outline-dark': !isTotalCopied, 'btn-success': isTotalCopied }"
-            type="button" @click="touchCopyTotal()">
-            <font-awesome-icon v-if="isTotalCopied" icon="fa-paste" />
-            <font-awesome-icon v-else icon="fa-clipboard" />
-            {{ isTotalCopied ? "已複製" : "複製總分" }}
-          </button>
-        </td>
+        <td />
         <td />
         <td />
       </tr>
@@ -1005,11 +1005,6 @@ td a {
 .button-group button {
   margin-top: 10px;
   margin-right: 10px;
-}
-#copy {
-  width: 110px;
-  /* border: 1px solid #ccc; */
-  /* padding: 10px; */
 }
 
 .frac {
