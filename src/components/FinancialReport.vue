@@ -865,7 +865,7 @@ async function confirm() {
           const response = await fetch("/api" + url, { method: "HEAD" });
           return response.ok;
         } catch (error) {
-          morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+          morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
           console.error(error);
         }
       }
@@ -878,17 +878,22 @@ async function confirm() {
       try {
         const isXnasValid = await checkURL(xnasValuationUrl);
         if (isXnasValid) {
-          morningStarUrl.value = `https://www.morningstar.com/stocks${xnasValuationUrl}`;
+          morningStarUrl.value = `${morningStarIndex}stocks${xnasValuationUrl}`;
         } else {
           const isXnysValid = await checkURL(xnysValuationUrl);
           if (isXnysValid) {
-            morningStarUrl.value = `https://www.morningstar.com/stocks${xnysValuationUrl}`;
+            morningStarUrl.value = `${morningStarIndex}stocks${xnysValuationUrl}`;
           } else {
-            morningStarUrl.value = `https://www.morningstar.com/stocks${batsValuationUrl}`;
+            const isBatsValid = await checkURL(batsValuationUrl);
+            if (isBatsValid) {
+              morningStarUrl.value = `${morningStarIndex}stocks${batsValuationUrl}`;
+            } else {
+              morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
+            }
           }
         }
       } catch (error) {
-        morningStarUrl.value = `https://www.morningstar.com/search?query=${stockSymbol}`;
+        morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
         console.error(error);
       }
 
@@ -898,7 +903,7 @@ async function confirm() {
       errorMessage.value = "";
     }
   } catch (error) {
-    morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+    morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
     console.log(error);
   } finally {
     isLoading.value = false;
