@@ -17,7 +17,7 @@
         </div>
         <div class="input-group-append button-group">
           <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">
-            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right:10px"/>
+            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right:10px" />
             <font-awesome-icon icon="fa-magnifying-glass" />
             查詢
           </button>
@@ -83,7 +83,8 @@
         <th></th>
         <th></th>
         <th>
-          <button class="btn btn-outline-success btn-sm" @click="openUrls()">
+          <button class="btn btn-outline-success btn-sm" @click="openUrls()" :disabled="isDisabled">
+            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right:10px" />
             <font-awesome-icon icon="fa-window-restore" />
             一鍵開啟財報網址
           </button>
@@ -333,8 +334,7 @@
         <td style="background-color: #f6b3bb">{{ total }}</td>
         <td>
           <button class="btn btn-sm" :class="{ 'btn-outline-dark': !isTotalCopied, 'btn-success': isTotalCopied }"
-            type="button" @click="touchCopyTotal()"
-            style="margin-right:7px">
+            type="button" @click="touchCopyTotal()" style="margin-right:7px">
             <font-awesome-icon v-if="isTotalCopied" icon="fa-paste" />
             <font-awesome-icon v-else icon="fa-clipboard" />
             {{ isTotalCopied ? "已複製" : "複製總分" }}
@@ -789,39 +789,39 @@ async function confirm() {
       balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
       gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
+
       // 查詢morningStar網址是xnas還是xnys
       async function checkURL(url) {
-        return await fetch("/api" + url, { method: "HEAD" })
-          .then((response) => {
-            if (response.ok) {
-              return true;
-            } else {
-              return false;
-            }
-          })
-          .catch((error) => {
-            morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
-            morningStarFinancialsUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
-            console.error(error);
-          });
+        try {
+          const response = await fetch("/api" + url, { method: "HEAD" });
+          return response.ok;
+        } catch (error) {
+          morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+          console.error(error);
+        }
       }
 
-      const xnas = `/xnas/${stock.value}/valuation`;
-      await checkURL(xnas)
-        .then((result) => {
-          if (result) {
-            morningStarUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/valuation`;
-            morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/financials`;
+      const stockSymbol = stock.value;
+      const xnasValuationUrl = `/xnas/${stockSymbol}/valuation`;
+      const xnysValuationUrl = `/xnys/${stockSymbol}/valuation`;
+      const batsValuationUrl = `/bats/${stockSymbol}/valuation`;
+
+      try {
+        const isXnasValid = await checkURL(xnasValuationUrl);
+        if (isXnasValid) {
+          morningStarUrl.value = `https://www.morningstar.com/stocks${xnasValuationUrl}`;
+        } else {
+          const isXnysValid = await checkURL(xnysValuationUrl);
+          if (isXnysValid) {
+            morningStarUrl.value = `https://www.morningstar.com/stocks${xnysValuationUrl}`;
           } else {
-            morningStarUrl.value = `https://www.morningstar.com/stocks/xnys/${stock.value}/valuation`;
-            morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/financials`;
+            morningStarUrl.value = `https://www.morningstar.com/stocks${batsValuationUrl}`;
           }
-        })
-        .catch((error) => {
-          morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
-          morningStarFinancialsUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
-          console.error(error);
-        });
+        }
+      } catch (error) {
+        morningStarUrl.value = `https://www.morningstar.com/search?query=${stockSymbol}`;
+        console.error(error);
+      }
 
       isEdit.value = true;
       stock.value = stock.value.toUpperCase();
