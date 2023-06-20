@@ -862,6 +862,7 @@ async function confirm() {
       // 查詢morningStar網址是xnas還是xnys
       async function checkURL(url) {
         try {
+          console.log("url: ", url);
           const response = await fetch("/api" + url, { method: "HEAD" });
           return response.ok;
         } catch (error) {
@@ -869,7 +870,7 @@ async function confirm() {
           console.error(error);
         }
       }
-
+      console.log("stockSymbol: " , stock.value)
       const stockSymbol = stock.value;
       const xnasValuationUrl = `/xnas/${stockSymbol}/valuation`;
       const xnysValuationUrl = `/xnys/${stockSymbol}/valuation`;
