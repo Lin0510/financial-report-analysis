@@ -790,10 +790,10 @@ async function confirm() {
       mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
       gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
 
-      // 查詢morningStar網址是xnas還是xnys
+      // 查詢morningStar網址，xnas/xnys/bats
       async function checkURL(url) {
         try {
-          const response = await fetch("/api" + url, { method: "HEAD" });
+          const response = await fetch("https://www.morningstar.com/stocks" + url, { method: "HEAD" });
           return response.ok;
         } catch (error) {
           morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
