@@ -812,7 +812,7 @@ async function confirm() {
       // 查詢morningStar網址，xnas/xnys/bats
       async function checkURL(url) {
         try {
-          const response = await fetch("https://www.morningstar.com/stocks" + url, { method: "HEAD" });
+          const response = await fetch("/api" + url, { method: "HEAD" });
           return response.ok;
         } catch (error) {
           morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
