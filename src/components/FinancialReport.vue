@@ -839,7 +839,7 @@ async function confirm() {
     const IEXResponse = await fetch(IEXCloudAPI(stockCode));
     const IEXData = await IEXResponse.json();
     const data = IEXData[0];
-
+    console.log(data);
     if (!data) {
       // 處理data為空的情况
       stockExsits.value = false;
@@ -860,8 +860,8 @@ async function confirm() {
       gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
 
       // 查詢morningStar網址是xnas還是xnys
-      function checkURL(url) {
-        return fetch("/api" + url, { method: "HEAD" })
+      async function checkURL(url) {
+        return await fetch("/api" + url, { method: "HEAD" })
           .then((response) => {
             if (response.ok) {
               return true;
@@ -876,7 +876,7 @@ async function confirm() {
       }
 
       const xnas = `/xnas/${stock.value}/valuation`;
-      checkURL(xnas)
+      await checkURL(xnas)
         .then((result) => {
           if (result) {
             morningStarUrl.value = `https://www.morningstar.com/stocks/xnas/${stock.value}/valuation`;
