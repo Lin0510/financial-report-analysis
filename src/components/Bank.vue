@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
       <div class="col-md-4 col-sm-10">
         <div class="input-group has-validation">
-          <input v-model="stock" @input="restrictInput($event)" maxlength="5" class="form-control"
+          <input v-model="stock" @input="isLetterOrDot($event)" maxlength="5" class="form-control"
             placeholder="請輸入股票代碼，只能輸入英文字母和." :class="{ 'is-invalid': isStockEmpty || !stockExsits }"
             :disabled="isDisabled" @keyup.enter="confirm()" />
           <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
@@ -913,13 +913,19 @@ function edit() {
   reset();
 }
 
-function restrictInput(event) {
-  const regex = /^[a-zA-Z.]*$/; // 正則表達式，只允許英文字母和點號
-  const inputValue = event.target.value;
-  if (!regex.test(inputValue)) {
-    this.stock = inputValue.replace(/[^a-zA-Z.]/g, "");
+function isLetterOrDot(e) {
+  // 獲取字元 
+  let char = String.fromCharCode(e.keyCode); 
+  // 正則表達式，只允許英文字母和點號
+  const regex = /^[a-zA-Z.]*$/; 
+  if (regex.test(char)) {
+    return true;
+  } else {
+    // 如果不匹配，不添加到input框
+    e.preventDefault(); 
   }
 }
+
 
 // 初始化剪貼板功能
 const { toClipboard } = useClipboard();
