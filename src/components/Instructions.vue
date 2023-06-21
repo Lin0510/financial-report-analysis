@@ -9,6 +9,11 @@
           本網站將【慢遊美股VIP】財報分析的Excel表格使用網頁呈現，能更加方便學員分析公司。
         </p>
         <p class="text-left">
+          使用<a class="custom-link" href="https://iexcloud.io/docs/core/quote" target="_blank">
+            IEX Cloud API
+          </a>提供的免費 API 查詢公司名稱與股價
+        </p>
+        <p class="text-left">
           在此網站的表格中，有加入課程中提到擇一加分的邏輯，如：10年每年持續穩定發股息／10年股息每年越發越多，擇一加分，此時勾選其中一個給分，另一格則自動勾選不給分
         </p>
         <p class="text-left">
@@ -20,11 +25,6 @@
         <p>切換到其他表格<b>數據不保留</b>，請記錄完所需數據後再切換到其他表格</p>
         <p>點擊「編輯」按鈕時，下面表格分數<b>會歸零並清空checkbox所有勾選項</b>，請記錄完分數後再進行編輯</p>
         <p>表格最下面的「Reset」按鈕，只針對表格裡面的checkbox和分數重置</p>
-        <p>
-          使用<a class="custom-link" href="https://iexcloud.io/docs/core/quote" target="_blank">
-            IEX Cloud API
-          </a>提供的免費 API 查詢公司名稱與股價
-        </p>
 
       </section>
       <section class="col-md-7">
