@@ -5,6 +5,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faRotateLeft,
   faCheck,
+  faEnvelope,
   faXmark,
   faDivide,
   faWindowRestore,
@@ -30,6 +31,7 @@ library.add(faPaste);
 library.add(faClipboard);
 library.add(faEdit);
 library.add(faWarning);
+library.add(faEnvelope);
 
 createApp(App)
   .use(router)

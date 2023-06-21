@@ -519,9 +519,11 @@ function calculate() {
   );
   ratio.value = `${value} %`;
   if (value > referenceValue) {
+    iirPoints.value = 1;
     form.iir_1 = true;
     form.iir_2 = false;
   } else {
+    iirPoints.value = 0;
     form.iir_1 = false;
     form.iir_2 = true;
   }
