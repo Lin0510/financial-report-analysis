@@ -4,7 +4,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "https://cors-anywhere.herokuapp.com/https://www.morningstar.com",
+        target: "https://www.morningstar.com",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/stocks",

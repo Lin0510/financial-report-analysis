@@ -862,7 +862,11 @@ async function confirm() {
       // 查詢morningStar網址，xnas/xnys/bats
       async function checkURL(url) {
         try {
-          const response = await fetch("/api" + url, { method: "HEAD" });
+          // 開發環境使用
+          // const response = await fetch("/api" + url, { method: "HEAD" });
+          const response = await fetch("https://cors-anywhere.herokuapp.com/https://www.morningstar.com/stocks" + url, { method: "HEAD" });
+          console.log(response);
+          console.log("https://cors-anywhere.herokuapp.com/https://www.morningstar.com" + url);
           return response.ok;
         } catch (error) {
           morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
