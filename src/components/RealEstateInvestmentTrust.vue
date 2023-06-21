@@ -832,9 +832,6 @@ async function confirm() {
   }
 
   let stockCode = stock.value;
-  if (stock.value.includes(".")) {
-    stockCode = stock.value.replace(".", "-");
-  }
 
   try {
     isLoading.value = true;
