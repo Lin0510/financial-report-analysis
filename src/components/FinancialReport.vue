@@ -985,9 +985,9 @@ function edit() {
   reset();
 }
 
-function restrictInput(event) {
+function restrictInput($event) {
   const regex = /^[a-zA-Z.]*$/; // 正則表達式，只允許英文字母和點號
-  const inputValue = event.target.value;
+  const inputValue = $event.target.value;
   if (!regex.test(inputValue)) {
     this.stock = inputValue.replace(/[^a-zA-Z.]/g, "");
   }

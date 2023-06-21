@@ -21,6 +21,7 @@
 
 
 nav {
+  margin-bottom: 30px;
   padding: 1x;
 }
 
