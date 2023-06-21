@@ -106,7 +106,15 @@
           </div>
         </td>
         <td rowspan="2" class="SMN_effect-15">
-          <a :href="stockrowUrl" target="_blank">stockrow</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              stockrow
+            </span>
+          </div>
+          <div v-else>
+            <a :href="stockrowUrl" target="_blank">stockrow</a>
+          </div>
         </td>
       </tr>
       <tr>
@@ -141,7 +149,15 @@
           </div>
         </td>
         <td class="SMN_effect-15">
-          <a :href="gurufocusUrl" target="_blank">gurufocus</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              gurufocus
+            </span>
+          </div>
+          <div v-else>
+            <a :href="gurufocusUrl" target="_blank">gurufocus</a>
+          </div>
         </td>
       </tr>
       <tr>
@@ -159,7 +175,15 @@
           </div>
         </td>
         <td class="SMN_effect-15">
-          <a :href="incomeUrl" target="_blank">stockrow Income</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              stockrow Income
+            </span>
+          </div>
+          <div v-else>
+            <a :href="incomeUrl" target="_blank">stockrow Income</a>
+          </div>
         </td>
       </tr>
       <tr>
@@ -179,7 +203,15 @@
           </div>
         </td>
         <td class="SMN_effect-15">
-          <a :href="balanceSheetUrl" target="_blank">stockrow Balance Sheet</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              stockrow Balance Sheet
+            </span>
+          </div>
+          <div v-else>
+            <a :href="balanceSheetUrl" target="_blank">stockrow Balance Sheet</a>
+          </div>
         </td>
       </tr>
       <tr>
@@ -197,7 +229,15 @@
           </div>
         </td>
         <td rowspan="6" class="SMN_effect-15">
-          <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              stockrow Metrics
+            </span>
+          </div>
+          <div v-else>
+            <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
+          </div>
         </td>
       </tr>
       <tr>
@@ -292,7 +332,15 @@
           </div>
         </td>
         <td class="SMN_effect-15">
-          <a :href="marketWatchUrl" target="_blank">MarketWatch</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              MarketWatch
+            </span>
+          </div>
+          <div v-else>
+            <a :href="marketWatchUrl" target="_blank">MarketWatch</a>
+          </div>
         </td>
       </tr>
       <tr>
@@ -310,7 +358,15 @@
           </div>
         </td>
         <td rowspan="2" class="SMN_effect-15">
-          <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
+          <div v-if="isLoading">
+            <span class="disabled">
+              <span class="spinner-grow spinner-grow-sm" style="margin-right:3px" />
+              Morningstar Key Ratio Data
+            </span>
+          </div>
+          <div v-else>
+            <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
+          </div>
         </td>
       </tr>
       <tr>

@@ -33,20 +33,13 @@ nav a {
 }
 
 nav a:focus {
-  /* color: #AEBAD2; */
   color: #222831;
 }
 
 nav a.router-link-exact-active {
   color: #0A58CA;
-  /* text-decoration: underline;
-  text-decoration-color: #0abde3;
-  text-decoration-thickness: 3px; */
 }
 
-/* .form-check-label {
-  user-select: none;
-} */
 
 a,
 a:visited,
@@ -56,9 +49,6 @@ a:active {
   backface-visibility: hidden;
   position: relative;
   transition: 0.5s color ease;
-
-  /* color: #aebad2; */
-  /* font-size: 2.5em; */
 }
 a.before:before,
 a.after:after {
@@ -91,5 +81,18 @@ a.sixth:after {
 a.before:hover:before,
 a.after:hover:after {
   width: 100%;
+}
+
+/* 禁止圖標 */
+.disabled {
+  color: #4f4f4f;
+  font-family: Lato;
+  font-size: 10pt;
+  font-weight: bold;
+  position: relative;
+  display: block;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: no-drop;
 }
 </style>
