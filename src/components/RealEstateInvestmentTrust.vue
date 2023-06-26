@@ -785,8 +785,17 @@ const morningStarUrl = ref(morningStarIndex);
 const marketWatchUrl = ref(marketWatchIndex);
 // -------------------------------------------
 // stock api
+const AlphaVantageNameAPI = (stockCode) => {
+  return `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stockCode}&apikey=8FYMDC697PL6LEEL`;
+};
+const AlphaVantageGlobalAPI = (stockCode) => {
+  return `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=LP46XK632CAP8PVK`;
+};
 const IEXCloudAPI = (stockCode) => {
   return `https://api.iex.cloud/v1/data/core/quote/${stockCode}?token=pk_a1bf9b4aef2045e2bcff3f6eb3bff015`;
+};
+const PolygonAPI = (stockCode) => {
+  return `https://api.polygon.io/v1/last_quote/stocks/${stockTicker}?apiKey=FwKVpAWvGdWPLQSgeDMnQC3aaxzvGtDg`;
 };
 // =======================================================================
 // 股票代碼
@@ -838,22 +847,62 @@ async function confirm() {
     isDisabled.value = true;
 
     // 呼叫查詢股票api
-    const IEXResponse = await fetch(IEXCloudAPI(stockCode));
-    const IEXData = await IEXResponse.json();
-    const data = IEXData[0];
+    // ======================================
+    // IEXCloudAPI
+    // ======================================
+    // #region
+    // const IEXResponse = await fetch(IEXCloudAPI(stockCode));
+    // const IEXData = await IEXResponse.json();
+    // const data = IEXData[0];
 
-    if (!data) {
+    // if (!data) {
+    //   // 處理data為空的情况
+    //   stockExsits.value = false;
+    //   errorMessage.value = "查無股票代碼";
+    // } else {
+    //   stockExsits.value = true;
+    //   stockName.value = data.companyName;
+    //   stockPrice.value = data.latestPrice;
+    //   currency.value = `${data.currency}`;
+    // }
+    // #endregion
+    // ======================================
+    // IEXCloudAPI
+    // ======================================
+    // #region
+    const AlphaVantageNameResponse = await fetch(AlphaVantageNameAPI(stockCode));
+    const nameData = await AlphaVantageNameResponse.json();
+
+    if (nameData.bestMatches && nameData.bestMatches.length > 0) {
+      stockExsits.value = true;
+      const matches = nameData.bestMatches;
+      const name = matches[0]["2. name"];
+      stockName.value = name;
+    } else {
       // 處理data為空的情况
       stockExsits.value = false;
       errorMessage.value = "查無股票代碼";
-    } else {
-      stockExsits.value = true;
-      stockName.value = data.companyName;
-      stockPrice.value = data.latestPrice;
-      currency.value = `${data.currency}`;
     }
+    // #endregion
 
     if (stockExsits.value) {
+      // 查詢股價
+      const GlobalResponse = await fetch(AlphaVantageGlobalAPI(stockCode));
+      const GlobalData = await GlobalResponse.json();
+
+      // 如果有Note代表一分鐘查詢超過五次了
+      if (GlobalData["Note"]) {
+        isCallLimitReached.value = true;
+        stockPrice.value = "";
+        stockPriceErrorMessage.value = "每分鐘最多查詢5次，請稍後再試";
+      }
+
+      // 取出股票的價格
+      if (GlobalData["Global Quote"]) {
+        const price = GlobalData["Global Quote"]["05. price"];
+        stockPrice.value = price;
+      }
+
       // 修改url
       stockrowUrl.value = stockRowIndex + stock.value;
       incomeUrl.value = stockrowUrl.value + "/financials/income/annual";

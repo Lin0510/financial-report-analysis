@@ -9,9 +9,9 @@
           本網站將【慢遊美股VIP】財報分析的Excel表格使用網頁呈現，能更加方便學員分析公司。
         </p>
         <p class="text-left">
-          使用<a class="custom-link" href="https://iexcloud.io/docs/core/quote" target="_blank">
-            IEX Cloud API
-          </a>提供的免費 API 查詢公司名稱與股價
+          使用<a class="custom-link" href="https://www.alphavantage.co/" target="_blank">
+            Alpha Vantage
+          </a>提供的免費 API 查詢名稱與股價，限制：每分鐘最多 5 次查詢，每天最多 500 次查詢
         </p>
         <p class="text-left">
           在此網站的表格中，有加入課程中提到擇一加分的邏輯，如：10年每年持續穩定發股息／10年股息每年越發越多，擇一加分，此時勾選其中一個給分，另一格則自動勾選不給分
