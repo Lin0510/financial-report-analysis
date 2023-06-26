@@ -64,16 +64,17 @@
           <div class="input-group">
             <input
               id="priceLabel"
+              type="number"
               class="form-control"
               :class="{ 'is-invalid': isCallLimitReached }"
               :value="stockPrice"
-              disabled
+              :disabled="!isCallLimitReached"
             />
-            <span class="input-group-text">{{ currency }}</span>
+            <!-- <span v-show="!isCallLimitReached" class="input-group-text">{{ currency }}</span> -->
             <div v-if="isCallLimitReached" class="invalid-feedback">
               {{ stockPriceErrorMessage }}
             </div>
-            <div else class="input-groutruep-append" style="padding: 0 0.5rem">
+            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem">
               <button
                 class="btn"
                 :class="{
@@ -1164,7 +1165,7 @@ async function confirm() {
       // 查詢股價
       const GlobalResponse = await fetch(AlphaVantageGlobalAPI(stockCode));
       const GlobalData = await GlobalResponse.json();
-
+      console.log(GlobalData);
       // 如果有Note代表一分鐘查詢超過五次了
       if (GlobalData["Note"]) {
         isCallLimitReached.value = true;

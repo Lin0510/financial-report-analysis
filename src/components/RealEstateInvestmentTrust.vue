@@ -64,12 +64,13 @@
           <div class="input-group">
             <input
               id="priceLabel"
+              type="number"
               class="form-control"
               :class="{ 'is-invalid': isCallLimitReached }"
               :value="stockPrice"
-              disabled
+              :disabled="!isCallLimitReached"
             />
-            <span class="input-group-text">{{ currency }}</span>
+            <!-- <span class="input-group-text">{{ currency }}</span> -->
             <div v-if="isCallLimitReached" class="invalid-feedback">
               {{ stockPriceErrorMessage }}
             </div>
