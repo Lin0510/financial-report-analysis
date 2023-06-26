@@ -18,14 +18,26 @@
         <td>-1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.technologyRisk_1" @click="technologyRiskDeductPoint()"
-              type="checkbox" id="technologyRisk_1">
+            <input
+              class="form-check-input"
+              v-model="form.technologyRisk_1"
+              @click="technologyRiskDeductPoint()"
+              type="checkbox"
+              id="technologyRisk_1"
+            />
             <label class="form-check-label" for="technologyRisk_1">扣分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.technologyRisk_2" type="checkbox" id="technologyRisk_2"
-              @click="technologyRiskNoDeductPoint()">
-            <label class="form-check-label" for="technologyRisk_2">不扣分</label>
+            <input
+              class="form-check-input"
+              v-model="form.technologyRisk_2"
+              type="checkbox"
+              id="technologyRisk_2"
+              @click="technologyRiskNoDeductPoint()"
+            />
+            <label class="form-check-label" for="technologyRisk_2"
+              >不扣分</label
+            >
           </div>
         </td>
       </tr>
@@ -35,14 +47,26 @@
         <td>-1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.governmentRisk_1" @click="governmentRiskDeductPoint()"
-              type="checkbox" id="governmentRisk_1">
+            <input
+              class="form-check-input"
+              v-model="form.governmentRisk_1"
+              @click="governmentRiskDeductPoint()"
+              type="checkbox"
+              id="governmentRisk_1"
+            />
             <label class="form-check-label" for="governmentRisk_1">扣分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.governmentRisk_2" type="checkbox" id="governmentRisk_2"
-              @click="governmentRiskNoDeductPoint()">
-            <label class="form-check-label" for="governmentRisk_2">不扣分</label>
+            <input
+              class="form-check-input"
+              v-model="form.governmentRisk_2"
+              type="checkbox"
+              id="governmentRisk_2"
+              @click="governmentRiskNoDeductPoint()"
+            />
+            <label class="form-check-label" for="governmentRisk_2"
+              >不扣分</label
+            >
           </div>
         </td>
       </tr>
@@ -52,13 +76,23 @@
         <td>-1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.chinaRisk_1" @click="chinaRiskDeductPoint()" type="checkbox"
-              id="chinaRisk_1">
+            <input
+              class="form-check-input"
+              v-model="form.chinaRisk_1"
+              @click="chinaRiskDeductPoint()"
+              type="checkbox"
+              id="chinaRisk_1"
+            />
             <label class="form-check-label" for="chinaRisk_1">扣分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.chinaRisk_2" type="checkbox" id="chinaRisk_2"
-              @click="chinaRiskNoDeductPoint()">
+            <input
+              class="form-check-input"
+              v-model="form.chinaRisk_2"
+              type="checkbox"
+              id="chinaRisk_2"
+              @click="chinaRiskNoDeductPoint()"
+            />
             <label class="form-check-label" for="chinaRisk_2">不扣分</label>
           </div>
         </td>
@@ -66,13 +100,18 @@
       <tr>
         <td></td>
         <td></td>
-        <td style="background-color: #F6B3BB;">總分</td>
-        <td style="background-color: #F6B3BB;">{{ total }}</td>
+        <td style="background-color: #f6b3bb">總分</td>
+        <td style="background-color: #f6b3bb">{{ total }}</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <button style="text-align: center;" type="button" class="btn btn-primary" @click="reset()">
+  <button
+    style="text-align: center"
+    type="button"
+    class="btn btn-primary"
+    @click="reset()"
+  >
     <font-awesome-icon icon="fa-rotate-left" />
     Reset
   </button>

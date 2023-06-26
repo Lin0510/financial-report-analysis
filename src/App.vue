@@ -19,7 +19,6 @@
   user-select: none;
 }
 
-
 nav {
   margin-bottom: 30px;
   padding: 1x;
@@ -29,7 +28,7 @@ nav a {
   font-weight: bold;
   text-decoration: none;
   text-underline-offset: 3px;
-  color: rgba(0,0,0,.6);
+  color: rgba(0, 0, 0, 0.6);
   font-size: 20px;
 }
 
@@ -38,9 +37,8 @@ nav a:focus {
 }
 
 nav a.router-link-exact-active {
-  color: #0A58CA;
+  color: #0a58ca;
 }
-
 
 a,
 a:visited,
