@@ -27,14 +27,6 @@
       </section>
       <section class="col-md-6">
         <h2>注意事項</h2>
-        <!-- <div class="custom-list text-left">
-          <p>切換到其他表格<b>數據不保留</b>，請記錄完所需數據後再切換到其他表格</p>
-        <p>點擊「編輯」按鈕時，下面表格<b>分數會歸零並清空checkbox所有勾選項</b>，請記錄完分數後再進行編輯</p>
-        <p>表格最下面的「Reset」按鈕，只針對表格裡面的checkbox和分數重置</p>
-        <p>
-            在銀行股評分表格中的利息收入比 (Interest Income Ratio)，提供兩個 input 框計算 ratio，輸入完點擊「計算」按鈕 或 按下「Enter 鍵」即可計算出 ratio，並判斷是否低於50%，自動勾選給分/不給分
-        </p>
-        </div> -->
         <ul class="text-left">
           <li>
             切換到其他表格<b>數據不保留</b>，請記錄完所需數據後再切換到其他表格
@@ -53,6 +45,15 @@
             表格中的利息收入比 (Interest Income Ratio)，提供兩個 input 框計算
             ratio，輸入完點擊「計算」按鈕 或 按下「Enter 鍵」即可計算出
             ratio，並判斷是否低於50%，自動勾選給分/不給分
+          </li>
+        </ul>
+        <ul class="text-left">
+          <li>
+            在更新MorningStar網址時，網址較其他網站複雜，需要先傳送請求判斷網址是否回應200再更新網址，
+            此時會碰到cors的錯誤導致更新異常，這邊使用 <a href="https://cors-anywhere.herokuapp.com/" target="_blank">cors-anywhere</a> 解決cors錯誤，
+            需要使用者先去點選<a target="_blank" href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
+            並點擊 Request temporary access to the demo server，點選完之後會跳出You currently have temporary access to the demo server.，
+            此時就能正常更新MorningStar網址了
           </li>
         </ul>
       </section>
@@ -151,6 +152,9 @@ async function copySubject() {
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+}
 .custom-list {
   list-style-type: decimal;
   padding-left: 20px;

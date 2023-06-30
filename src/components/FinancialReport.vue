@@ -1,4 +1,12 @@
 <template>
+    <Modal v-model="closeableModal" closeable header="解決方法">
+    <p>
+      如果輸入完股票代碼後，點擊MorningStar網址沒辦法直接跳轉到該股票公司數據頁面，
+      這邊需要前往這個網站<a style="text-decoration: none" target="_blank" href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
+      並點擊 Request temporary access to the demo server，點選完之後會跳出You currently have temporary access to the demo server.，
+      此時MorningStar網址就可以正常跳轉了
+    </p>
+  </Modal>
   <div class="container" v-if="!isEdit">
     <div class="row justify-content-center">
       <div class="col-md-4 col-sm-10">
@@ -105,7 +113,17 @@
     <thead>
       <tr>
         <th class="table-dark">財報分析</th>
-        <th></th>
+        <th>
+          <button
+            id="modalButton"
+            @click="closeableModal = true"
+            type="button"
+            class="btn btn-warning mb-2"
+          >
+            <font-awesome-icon icon="fa-warning" />
+            MorningStar異常solution
+          </button>
+        </th>
         <th></th>
         <th>
           <button
@@ -649,6 +667,9 @@ import { watch } from "@vue/runtime-core";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import useClipboard from "vue-clipboard3";
+import Modal from "./Modal.vue";
+
+const closeableModal = ref(false);
 
 let form = reactive({
   divdend1_1: "",
