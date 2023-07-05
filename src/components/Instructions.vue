@@ -49,11 +49,11 @@
         </ul>
         <ul class="text-left">
           <li>
-            在更新MorningStar網址時，網址較其他網站複雜，需要先傳送請求判斷網址是否回應200再更新網址，
-            此時會碰到cors的錯誤導致更新異常，這邊使用 <a href="https://cors-anywhere.herokuapp.com/" target="_blank">cors-anywhere</a> 解決cors錯誤，
-            需要使用者先去點選<a target="_blank" href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
-            並點擊 Request temporary access to the demo server，點選完之後會跳出You currently have temporary access to the demo server.，
-            此時就能正常更新MorningStar網址了
+            在更新 MorningStar 網址這部分，網址組成較其他網站複雜，需要先傳送請求判斷網址是否回應200再更新網址，
+            此時會碰到 cors 的錯誤導致更新異常，這邊使用 <a href="https://cors-anywhere.herokuapp.com/" target="_blank">cors-anywhere</a> 解決cors錯誤，
+            需要使用者前往這個網站 <a target="_blank" href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
+            並點擊 Request temporary access to the demo server，點選完之後會跳出 You currently have temporary access to the demo server.，
+            此時就能正常更新 MorningStar 網址了
           </li>
         </ul>
       </section>

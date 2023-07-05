@@ -4,43 +4,33 @@
       ⛔注意⛔：銀行股本身業務較煩瑣，是一個靠錢賺錢的商業模式，建議新手可以先跳過銀行股，從民生用品股開始著手比較容易，除非你真的非常非常懂銀行業務，不然可以先跳過這個行業
     </p>
   </Modal>
+  <Modal v-model="errorModal" closeable header="發生錯誤">
+    <p>
+      MorningStar 無法導向 {{ stock }} 股票代碼的頁面，若要成功導向 {{ stock }} 股票代碼頁面
+      請前往這個網站 <a style="text-decoration: none" target="_blank"
+        href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
+      並點擊 Request temporary access to the demo server，點選完之後會跳出 You currently have temporary access to the demo server.，
+      現在查詢 MorningStar 就可以導向 {{ stock }} 股票代碼的頁面了
+    </p>
+  </Modal>
   <div class="container" v-if="!isEdit">
     <div class="row justify-content-center">
       <div class="col-md-4 col-sm-10">
         <div class="input-group has-validation">
-          <input
-            v-model="stock"
-            @keypress="isLetterOrDot($event)"
-            maxlength="5"
-            class="form-control"
-            placeholder="請輸入股票代碼，只能輸入英文字母和."
-            :class="{ 'is-invalid': isStockEmpty || !stockExsits }"
-            :disabled="isDisabled"
-            @keyup.enter="confirm()"
-          />
+          <input v-model="stock" @keypress="isLetterOrDot($event)" maxlength="5" class="form-control"
+            placeholder="請輸入股票代碼，只能輸入英文字母和." :class="{ 'is-invalid': isStockEmpty || !stockExsits }"
+            :disabled="isDisabled" @keyup.enter="confirm()" />
           <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
             {{ errorMessage }}
           </div>
         </div>
         <div class="input-group-append button-group">
-          <button
-            class="btn btn-primary"
-            @click="confirm"
-            :disabled="isDisabled"
-          >
-            <span
-              v-if="isLoading"
-              class="spinner-border spinner-border-sm"
-              style="margin-right: 10px"
-            />
+          <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">
+            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right: 10px" />
             <font-awesome-icon icon="fa-magnifying-glass" />
             查詢
           </button>
-          <button
-            class="btn btn-secondary"
-            @click="clear"
-            :disabled="isDisabled"
-          >
+          <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">
             <font-awesome-icon icon="fa-eraser" />
             清除
           </button>
@@ -57,42 +47,22 @@
         </div>
         <div class="form-group">
           <label for="nameLabel">股票名稱</label>
-          <input
-            id="nameLabel"
-            class="form-control"
-            :value="stockName"
-            disabled
-          />
+          <input id="nameLabel" class="form-control" :value="stockName" disabled />
         </div>
         <div class="form-group">
           <label for="priceLabel">現在股價</label>
           <div class="input-group">
-            <input
-              id="priceLabel"
-              type="number"
-              class="form-control"
-              :class="{ 'is-invalid': isCallLimitReached }"
-              :value="stockPrice"
-              :disabled="!isCallLimitReached"
-            />
+            <input id="priceLabel" type="number" class="form-control" :class="{ 'is-invalid': isCallLimitReached }"
+              :value="stockPrice" :disabled="!isCallLimitReached" />
             <!-- <span class="input-group-text">{{ currency }}</span> -->
             <div v-if="isCallLimitReached" class="invalid-feedback">
               {{ stockPriceErrorMessage }}
             </div>
-            <div
-              v-else
-              class="input-groutruep-append"
-              style="padding: 0 0.5rem"
-            >
-              <button
-                class="btn"
-                :class="{
+            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem">
+              <button class="btn" :class="{
                   'btn-outline-secondary': !isCopied,
                   'btn-outline-success': isCopied,
-                }"
-                type="button"
-                @click="touchCopy()"
-              >
+                }" type="button" @click="touchCopy()">
                 <font-awesome-icon v-if="isCopied" icon="fa-paste" />
                 <font-awesome-icon v-else icon="fa-clipboard" />
                 {{ isCopied ? "已複製" : "複製股價" }}
@@ -114,12 +84,7 @@
       <tr>
         <th class="table-dark">【銀行股】評分標準</th>
         <th>
-          <button
-            id="modalButton"
-            @click="closeableModal = true"
-            type="button"
-            class="btn btn-warning mb-2"
-          >
+          <button id="modalButton" @click="closeableModal = true" type="button" class="btn btn-warning mb-2">
             <font-awesome-icon icon="fa-warning" />
             注意事項
           </button>
@@ -127,16 +92,8 @@
         <th></th>
         <th></th>
         <th>
-          <button
-            class="btn btn-outline-success btn-sm"
-            @click="openUrls()"
-            :disabled="isDisabled"
-          >
-            <span
-              v-if="isLoading"
-              class="spinner-border spinner-border-sm"
-              style="margin-right: 10px"
-            />
+          <button class="btn btn-outline-success btn-sm" @click="openUrls()" :disabled="isDisabled">
+            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right: 10px" />
             <font-awesome-icon icon="fa-window-restore" />
             一鍵開啟財報網址
           </button>
@@ -157,33 +114,20 @@
         <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.divdend1_1"
-              @click="divdend1GetPoint()"
-              type="checkbox"
-              id="divdend1_1"
-            />
+            <input class="form-check-input" v-model="form.divdend1_1" @click="divdend1GetPoint()" type="checkbox"
+              id="divdend1_1" />
             <label class="form-check-label" for="divdend1_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.divdend1_2"
-              type="checkbox"
-              id="divdend1_2"
-              @click="divdend1NotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.divdend1_2" type="checkbox" id="divdend1_2"
+              @click="divdend1NotGetPoint()" />
             <label class="form-check-label" for="divdend1_2">不給分</label>
           </div>
         </td>
         <td rowspan="2" class="SMN_effect-15">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               stockrow
             </span>
           </div>
@@ -197,23 +141,13 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.divdend2_1"
-              @click="divdend2GetPoint()"
-              type="checkbox"
-              id="divdend2_1"
-            />
+            <input class="form-check-input" v-model="form.divdend2_1" @click="divdend2GetPoint()" type="checkbox"
+              id="divdend2_1" />
             <label class="form-check-label" for="divdend2_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.divdend2_2"
-              type="checkbox"
-              id="divdend2_2"
-              @click="divdend2NotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.divdend2_2" type="checkbox" id="divdend2_2"
+              @click="divdend2NotGetPoint()" />
             <label class="form-check-label" for="divdend2_2">不給分</label>
           </div>
         </td>
@@ -223,33 +157,20 @@
         <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.divdend3_1"
-              @click="divdend3GetPoint()"
-              type="checkbox"
-              id="divdend3_1"
-            />
+            <input class="form-check-input" v-model="form.divdend3_1" @click="divdend3GetPoint()" type="checkbox"
+              id="divdend3_1" />
             <label class="form-check-label" for="divdend3_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.divdend3_2"
-              type="checkbox"
-              id="divdend3_2"
-              @click="divdend3NotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.divdend3_2" type="checkbox" id="divdend3_2"
+              @click="divdend3NotGetPoint()" />
             <label class="form-check-label" for="divdend3_2">不給分</label>
           </div>
         </td>
         <td class="SMN_effect-15">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               gurufocus
             </span>
           </div>
@@ -264,33 +185,18 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.eps_1"
-              @click="epsGetPoint()"
-              type="checkbox"
-              id="eps_1"
-            />
+            <input class="form-check-input" v-model="form.eps_1" @click="epsGetPoint()" type="checkbox" id="eps_1" />
             <label class="form-check-label" for="eps_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.eps_2"
-              type="checkbox"
-              id="eps_2"
-              @click="epsNotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.eps_2" type="checkbox" id="eps_2" @click="epsNotGetPoint()" />
             <label class="form-check-label" for="eps_2">不給分</label>
           </div>
         </td>
         <td class="SMN_effect-15">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               stockrow Income
             </span>
           </div>
@@ -305,40 +211,25 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.shares_1"
-              @click="sharesGetPoint()"
-              type="checkbox"
-              id="shares_1"
-            />
+            <input class="form-check-input" v-model="form.shares_1" @click="sharesGetPoint()" type="checkbox"
+              id="shares_1" />
             <label class="form-check-label" for="shares_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.shares_2"
-              type="checkbox"
-              id="shares_2"
-              @click="sharesNotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.shares_2" type="checkbox" id="shares_2"
+              @click="sharesNotGetPoint()" />
             <label class="form-check-label" for="shares_2">不給分</label>
           </div>
         </td>
         <td class="SMN_effect-15">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               stockrow Balance Sheet
             </span>
           </div>
           <div v-else>
-            <a :href="balanceSheetUrl" target="_blank"
-              >stockrow Balance Sheet</a
-            >
+            <a :href="balanceSheetUrl" target="_blank">stockrow Balance Sheet</a>
           </div>
         </td>
       </tr>
@@ -348,33 +239,18 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.roa_1"
-              @click="roaGetPoint()"
-              type="checkbox"
-              id="roa_1"
-            />
+            <input class="form-check-input" v-model="form.roa_1" @click="roaGetPoint()" type="checkbox" id="roa_1" />
             <label class="form-check-label" for="roa_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.roa_2"
-              type="checkbox"
-              id="roa_2"
-              @click="roaNotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.roa_2" type="checkbox" id="roa_2" @click="roaNotGetPoint()" />
             <label class="form-check-label" for="roa_2">不給分</label>
           </div>
         </td>
         <td rowspan="3" class="SMN_effect-15">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               stockrow Metrics
             </span>
           </div>
@@ -389,23 +265,12 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.bvps_1"
-              @click="bvpsGetPoint()"
-              type="checkbox"
-              id="bvps_1"
-            />
+            <input class="form-check-input" v-model="form.bvps_1" @click="bvpsGetPoint()" type="checkbox" id="bvps_1" />
             <label class="form-check-label" for="bvps_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.bvps_2"
-              type="checkbox"
-              id="bvps_2"
-              @click="bvpsNotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.bvps_2" type="checkbox" id="bvps_2"
+              @click="bvpsNotGetPoint()" />
             <label class="form-check-label" for="bvps_2">不給分</label>
           </div>
         </td>
@@ -416,23 +281,11 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.fcf_1"
-              @click="fcfGetPoint()"
-              type="checkbox"
-              id="fcf_1"
-            />
+            <input class="form-check-input" v-model="form.fcf_1" @click="fcfGetPoint()" type="checkbox" id="fcf_1" />
             <label class="form-check-label" for="fcf_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.fcf_2"
-              type="checkbox"
-              id="fcf_2"
-              @click="fcfNotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.fcf_2" type="checkbox" id="fcf_2" @click="fcfNotGetPoint()" />
             <label class="form-check-label" for="fcf_2">不給分</label>
           </div>
         </td>
@@ -443,40 +296,23 @@
         <td>1</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.ic1_1"
-              @click="ic1GetPoint()"
-              type="checkbox"
-              id="ic1_1"
-            />
+            <input class="form-check-input" v-model="form.ic1_1" @click="ic1GetPoint()" type="checkbox" id="ic1_1" />
             <label class="form-check-label" for="ic1_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.ic1_2"
-              type="checkbox"
-              id="ic1_2"
-              @click="ic1NotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.ic1_2" type="checkbox" id="ic1_2" @click="ic1NotGetPoint()" />
             <label class="form-check-label" for="ic1_2">不給分</label>
           </div>
         </td>
         <td rowspan="2" class="SMN_effect-15">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               Morningstar Key Ratio Data
             </span>
           </div>
           <div v-else>
-            <a :href="morningStarUrl" target="_blank"
-              >Morningstar Key Ratio Data</a
-            >
+            <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
           </div>
         </td>
       </tr>
@@ -485,23 +321,11 @@
         <td>0.5</td>
         <td>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.ic2_1"
-              @click="ic2GetPoint()"
-              type="checkbox"
-              id="ic2_1"
-            />
+            <input class="form-check-input" v-model="form.ic2_1" @click="ic2GetPoint()" type="checkbox" id="ic2_1" />
             <label class="form-check-label" for="ic2_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.ic2_2"
-              type="checkbox"
-              id="ic2_2"
-              @click="ic2NotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.ic2_2" type="checkbox" id="ic2_2" @click="ic2NotGetPoint()" />
             <label class="form-check-label" for="ic2_2">不給分</label>
           </div>
         </td>
@@ -522,23 +346,11 @@
         <td>1</td>
         <td rowspan="2">
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.iir_1"
-              @click="iirGetPoint()"
-              type="checkbox"
-              id="iir_1"
-            />
+            <input class="form-check-input" v-model="form.iir_1" @click="iirGetPoint()" type="checkbox" id="iir_1" />
             <label class="form-check-label" for="iir_1">給分</label>
           </div>
           <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              v-model="form.iir_2"
-              type="checkbox"
-              id="iir_2"
-              @click="iirNotGetPoint()"
-            />
+            <input class="form-check-input" v-model="form.iir_2" type="checkbox" id="iir_2" @click="iirNotGetPoint()" />
             <label class="form-check-label" for="iir_2">不給分</label>
           </div>
           <div class="calculate">
@@ -551,17 +363,12 @@
         <td class="SMN_effect-15" rowspan="2">
           <div v-if="isLoading">
             <span class="disabled">
-              <span
-                class="spinner-grow spinner-grow-sm"
-                style="margin-right: 3px"
-              />
+              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
               Morningstar Financials
             </span>
           </div>
           <div v-else>
-            <a :href="morningStarFinancialsUrl" target="_blank"
-              >Morningstar Financials</a
-            >
+            <a :href="morningStarFinancialsUrl" target="_blank">Morningstar Financials</a>
           </div>
         </td>
       </tr>
@@ -570,25 +377,13 @@
           <div>
             <div class="frac">
               <div class="input-group mb-3 input-group-sm">
-                <input
-                  v-model="netInterestIncome"
-                  type="number"
-                  class="form-control input-text"
-                  placeholder="Net Interest Income"
-                  @keyup.enter="calculate()"
-                  aria-describedby="basic-addon1"
-                />
+                <input v-model="netInterestIncome" type="number" class="form-control input-text"
+                  placeholder="Net Interest Income" @keyup.enter="calculate()" aria-describedby="basic-addon1" />
               </div>
               <div class="bottom"></div>
               <div class="input-group mb-3 input-group-sm">
-                <input
-                  v-model="totalRevenue"
-                  type="number"
-                  class="form-control input-text"
-                  placeholder="Total Revenue"
-                  @keyup.enter="calculate()"
-                  aria-describedby="basic-addon1"
-                />
+                <input v-model="totalRevenue" type="number" class="form-control input-text" placeholder="Total Revenue"
+                  @keyup.enter="calculate()" aria-describedby="basic-addon1" />
               </div>
             </div>
             =
@@ -603,16 +398,10 @@
         <td style="background-color: #f6b3bb">總分</td>
         <td style="background-color: #f6b3bb">{{ total }}</td>
         <td>
-          <button
-            class="btn btn-sm"
-            :class="{
+          <button class="btn btn-sm" :class="{
               'btn-outline-dark': !isTotalCopied,
               'btn-success': isTotalCopied,
-            }"
-            type="button"
-            @click="touchCopyTotal()"
-            style="margin-right: 7px"
-          >
+            }" type="button" @click="touchCopyTotal()" style="margin-right: 7px">
             <font-awesome-icon v-if="isTotalCopied" icon="fa-paste" />
             <font-awesome-icon v-else icon="fa-clipboard" />
             {{ isTotalCopied ? "已複製" : "複製總分" }}
@@ -643,6 +432,7 @@ import useClipboard from "vue-clipboard3";
 import Modal from "./Modal.vue";
 
 const closeableModal = ref(false);
+const errorModal = ref(false);
 
 let form = reactive({
   divdend1_1: "",
@@ -1108,7 +898,7 @@ async function confirm() {
       // 取出股票的價格
       if (GlobalData["Global Quote"]) {
         const price = GlobalData["Global Quote"]["05. price"];
-        stockPrice.value = price;
+        stockPrice.value = Number.parseFloat(price).toFixed(2);
       }
 
       // 修改url
@@ -1128,9 +918,14 @@ async function confirm() {
               url,
             { method: "HEAD" }
           );
-          return response.ok;
+          if (response.ok) {
+            return true;
+          } else {
+            throw new Error(`Fetch failed with status ${response.status}`);
+          }          
         } catch (error) {
           morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+          errorModal.value = true;
           console.error(error);
         }
       }
