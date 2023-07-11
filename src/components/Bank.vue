@@ -90,7 +90,15 @@
           </button>
         </th>
         <th></th>
-        <th></th>
+        <th>
+          <button class="btn btn-sm" :class="{
+              'btn-outline-danger': !isNoDivdend,
+              'btn-outline-dark': isNoDivdend,
+            }" @click="noDivdends()">
+            <font-awesome-icon v-show="!isNoDivdend" icon="fa-xmark" />
+            {{ isNoDivdend ? "股息不給分" : "不發股息" }}
+          </button>
+        </th>
         <th>
           <button class="btn btn-outline-success btn-sm" @click="openUrls()" :disabled="isDisabled">
             <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right: 10px" />
@@ -133,6 +141,7 @@
           </div>
           <div v-else>
             <a :href="stockrowUrl" target="_blank">stockrow</a>
+            <a v-show="isShowDividendUrl" :href="morningStarDividendUrl" target="_blank">morningstar Dividends</a>
           </div>
         </td>
       </tr>
@@ -479,6 +488,50 @@ const totalRevenue = ref();
 const ratio = ref("");
 
 // Divdend
+const isNoDivdend = ref(false);
+function noDivdends() {
+  divdend1Points.value = 0;
+  divdend2Points.value = 0;
+  divdend3Points.value = 0;
+
+  form.divdend1_1 = false;
+  form.divdend2_1 = false;
+  form.divdend3_1 = false;
+
+  if (!form.divdend1_2 || !form.divdend2_2 || !form.divdend3_2) {
+    form.divdend1_2 = true;
+    form.divdend2_2 = true;
+    form.divdend3_2 = true;
+    isNoDivdend.value = true;
+  } else {
+    form.divdend1_2 = false;
+    form.divdend2_2 = false;
+    form.divdend3_2 = false;
+    isNoDivdend.value = false;
+  }
+}
+
+let isShowDividendUrl = ref(false);
+watch([() => form.divdend1_1, () => form.divdend2_1], (newValues) => {
+  if (newValues.some((value) => value)) {
+    isNoDivdend.value = false;
+    isShowDividendUrl.value = true;
+  } else {
+    isShowDividendUrl.value = false;
+  }
+});
+
+watch(
+  [() => form.divdend1_1, () => form.divdend2_1, () => form.divdend3_1],
+  (newValues) => {
+    console.log(newValues);
+    if (newValues.every((value) => value === false)) {
+      isNoDivdend.value = true;
+      isShowDividendUrl.value = false;
+    }
+  }
+);
+
 watch(
   () => form.divdend1_1,
   (newValue) => {
@@ -762,6 +815,7 @@ function reset() {
   ic1Points.value = 0;
   ic2Points.value = 0;
   iirPoints.value = 0;
+  isNoDivdend.value = false;
   netInterestIncome.value = "";
   totalRevenue.value = "";
   ratio.value = "";
@@ -778,6 +832,7 @@ const balanceSheetUrl = ref(stockRowIndex);
 const mertricsUrl = ref(stockRowIndex);
 const gurufocusUrl = ref(gurufocusIndex);
 const morningStarUrl = ref(morningStarIndex);
+const morningStarDividendUrl = ref(morningStarIndex);
 const morningStarFinancialsUrl = ref(morningStarIndex);
 // -------------------------------------------
 // stock api
@@ -926,10 +981,11 @@ async function confirm() {
             } else {
               throw new Error(`Fetch failed with status ${response.status}`);
             }
-          }          
+          }
         } catch (error) {
           morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
           morningStarFinancialsUrl.value = morningStarUrl.value;
+          morningStarDividendUrl.value = morningStarUrl.value;
           errorModal.value = true;
           console.error(error);
         }
@@ -937,30 +993,38 @@ async function confirm() {
 
       const stockSymbol = stock.value;
       const xnasValuationUrl = `/xnas/${stockSymbol}/valuation`;
-      const xnasFinancialsUrl = `/xnas/${stockSymbol}/financials`;
       const xnysValuationUrl = `/xnys/${stockSymbol}/valuation`;
-      const xnysFinancialsUrl = `/xnys/${stockSymbol}/financials`;
       const batsValuationUrl = `/bats/${stockSymbol}/valuation`;
-      const batsFinancialsUrl = `/bats/${stockSymbol}/financials`;
 
       try {
         const isXnasValid = await checkURL(xnasValuationUrl);
         if (isXnasValid) {
-          morningStarUrl.value = `https://www.morningstar.com/stocks${xnasValuationUrl}`;
-          morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks${xnasFinancialsUrl}`;
+          morningStarUrl.value = `${morningStarIndex}stocks/xnas/${stockSymbol}/valuation`;
+          morningStarFinancialsUrl.value = `${morningStarIndex}stocks/xnas/${stockSymbol}/financials`;
+          morningStarDividendUrl.value = `${morningStarIndex}stocks/xnas/${stockSymbol}/dividends`;
         } else {
           const isXnysValid = await checkURL(xnysValuationUrl);
           if (isXnysValid) {
-            morningStarUrl.value = `https://www.morningstar.com/stocks${xnysValuationUrl}`;
-            morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks${xnysFinancialsUrl}`;
+            morningStarUrl.value = `${morningStarIndex}stocks/xnys/${stockSymbol}/valuation`;
+            morningStarFinancialsUrl.value = `${morningStarIndex}stocks/xnys/${stockSymbol}/financials`;
+            morningStarDividendUrl.value = `${morningStarIndex}stocks/xnys/${stockSymbol}/dividends`;
           } else {
-            morningStarUrl.value = `https://www.morningstar.com/stocks${batsValuationUrl}`;
-            morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks${batsFinancialsUrl}`;
+            const isBatsValid = await checkURL(batsValuationUrl);
+            if (isBatsValid) {
+              morningStarUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/valuation`;
+              morningStarFinancialsUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/financials`;
+              morningStarDividendUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/dividends`;
+            } else {
+              morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
+              morningStarDividendUrl.value = morningStarUrl.value;
+              morningStarFinancialsUrl.value = morningStarUrl.value;
+            }
           }
         }
       } catch (error) {
-        morningStarUrl.value = `https://www.morningstar.com/search?query=${stockSymbol}`;
+        morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
         morningStarFinancialsUrl.value = morningStarUrl.value;
+        morningStarDividendUrl.value = morningStarUrl.value;
         console.error(error);
       }
 
@@ -970,6 +1034,9 @@ async function confirm() {
       errorMessage.value = "";
     }
   } catch (error) {
+    morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
+    morningStarFinancialsUrl.value = morningStarUrl.value;
+    morningStarDividendUrl.value = morningStarUrl.value;
     console.log(error);
   } finally {
     isLoading.value = false;
