@@ -19,7 +19,7 @@
         <div class="input-group has-validation">
           <input v-model="stock" @keypress="isLetterOrDot($event)" maxlength="5" class="form-control"
             placeholder="請輸入股票代碼，只能輸入英文字母和." :class="{ 'is-invalid': isStockEmpty || !stockExsits }"
-            :disabled="isDisabled" @keyup.enter="confirm()" />
+            :disabled="isDisabled" @keyup.enter="confirm()" ref="stockField" />
           <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
             {{ errorMessage }}
           </div>
@@ -434,6 +434,7 @@
 </template>
 <script setup>
 import { reactive, ref } from "@vue/reactivity";
+import { nextTick } from "vue";
 import { watch } from "@vue/runtime-core";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
@@ -1052,6 +1053,8 @@ function clear() {
   stockExsits.value = true;
   isCopied.value = false;
 }
+// 編輯
+const stockField = ref(null);
 function edit() {
   isEdit.value = false;
   isCopied.value = false;
@@ -1059,6 +1062,9 @@ function edit() {
   stockPrice.value = "";
   isCallLimitReached.value = false;
   reset();
+  nextTick(() => {
+    stockField.value.focus();
+  });
 }
 
 function isLetterOrDot(e) {
