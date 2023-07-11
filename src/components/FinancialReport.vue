@@ -1101,6 +1101,7 @@ function edit() {
   reset();
   nextTick(() => {
     stockField.value.focus();
+    stockField.value.setSelectionRange(0, stock.value.length);
   });
 }
 
