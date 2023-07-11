@@ -943,7 +943,11 @@ async function confirm() {
           if (response.ok) {
             return true;
           } else {
-            throw new Error(`Fetch failed with status ${response.status}`);
+            if (response.status == 404) {
+              console.log(`查無此網站:${url}`);
+            } else {
+              throw new Error(`Fetch failed with status ${response.status}`);
+            }
           }          
         } catch (error) {
           morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;

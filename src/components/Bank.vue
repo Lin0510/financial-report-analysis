@@ -921,10 +921,15 @@ async function confirm() {
           if (response.ok) {
             return true;
           } else {
-            throw new Error(`Fetch failed with status ${response.status}`);
+            if (response.status == 404) {
+              console.log(`查無此網站:${url}`);
+            } else {
+              throw new Error(`Fetch failed with status ${response.status}`);
+            }
           }          
         } catch (error) {
           morningStarUrl.value = `https://www.morningstar.com/search?query=${stock.value}`;
+          morningStarFinancialsUrl.value = morningStarUrl.value;
           errorModal.value = true;
           console.error(error);
         }
@@ -932,23 +937,30 @@ async function confirm() {
 
       const stockSymbol = stock.value;
       const xnasValuationUrl = `/xnas/${stockSymbol}/valuation`;
+      const xnasFinancialsUrl = `/xnas/${stockSymbol}/financials`;
       const xnysValuationUrl = `/xnys/${stockSymbol}/valuation`;
+      const xnysFinancialsUrl = `/xnys/${stockSymbol}/financials`;
       const batsValuationUrl = `/bats/${stockSymbol}/valuation`;
+      const batsFinancialsUrl = `/bats/${stockSymbol}/financials`;
 
       try {
         const isXnasValid = await checkURL(xnasValuationUrl);
         if (isXnasValid) {
           morningStarUrl.value = `https://www.morningstar.com/stocks${xnasValuationUrl}`;
+          morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks${xnasFinancialsUrl}`;
         } else {
           const isXnysValid = await checkURL(xnysValuationUrl);
           if (isXnysValid) {
             morningStarUrl.value = `https://www.morningstar.com/stocks${xnysValuationUrl}`;
+            morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks${xnysFinancialsUrl}`;
           } else {
             morningStarUrl.value = `https://www.morningstar.com/stocks${batsValuationUrl}`;
+            morningStarFinancialsUrl.value = `https://www.morningstar.com/stocks${batsFinancialsUrl}`;
           }
         }
       } catch (error) {
         morningStarUrl.value = `https://www.morningstar.com/search?query=${stockSymbol}`;
+        morningStarFinancialsUrl.value = morningStarUrl.value;
         console.error(error);
       }
 

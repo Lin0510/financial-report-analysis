@@ -938,7 +938,7 @@ async function confirm() {
     // }
     // #endregion
     // ======================================
-    // IEXCloudAPI
+    // AlphaVantage API
     // ======================================
     // #region
     const AlphaVantageNameResponse = await fetch(
@@ -996,7 +996,11 @@ async function confirm() {
           if (response.ok) {
             return true;
           } else {
-            throw new Error(`Fetch failed with status ${response.status}`);
+            if (response.status == 404) {
+              console.log(`查無此網站:${url}`);
+            } else {
+              throw new Error(`Fetch failed with status ${response.status}`);
+            }
           }
         } catch (error) {
           morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
