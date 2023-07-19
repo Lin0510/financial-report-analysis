@@ -5,7 +5,8 @@
     <router-link to="/moat" class="third after">護城河優勢</router-link> |
     <router-link to="/risk" class="third after">風險扣分</router-link> |
     <router-link to="/reits" class="third after">REITs評分標準</router-link> |
-    <router-link to="/bank" class="third after">銀行股評分標準</router-link>
+    <router-link to="/bank" class="third after">銀行股評分標準</router-link> |
+    <router-link to="/roi" class="third after">年化報酬率計算</router-link>
   </nav>
   <router-view />
 </template>

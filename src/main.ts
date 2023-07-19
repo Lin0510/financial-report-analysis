@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+import VueLatex from 'vatex'
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faRotateLeft,
@@ -35,5 +36,6 @@ library.add(faEnvelope);
 
 createApp(App)
   .use(router)
+  .use(VueLatex)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");

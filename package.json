@@ -23,7 +23,9 @@
     "bootstrap-icons": "^1.8.1",
     "bootstrap-vue": "^2.21.2",
     "cors-anywhere": "^0.4.4",
+    "katex": "^0.13.24",
     "prettier": "^2.8.8",
+    "vatex": "^0.1.0",
     "vue": "^3.2.13",
     "vue-clipboard3": "^2.0.0",
     "vue-router": "^4.0.3"

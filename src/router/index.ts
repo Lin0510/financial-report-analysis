@@ -5,6 +5,7 @@ import Risk from "../components/Risk.vue";
 import Instructions from "../components/Instructions.vue";
 import Reits from "../components/RealEstateInvestmentTrust.vue";
 import Bank from "../components/Bank.vue";
+import Roi from "../components/RoiCalculator.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
@@ -40,6 +41,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/bank",
     name: "bank",
     component: Bank,
+  },
+  {
+    path: "/roi",
+    name: "roi",
+    component: Roi,
   },
 ];
 
