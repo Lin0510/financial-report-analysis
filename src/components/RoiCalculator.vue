@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="button-group">
-          <button class="btn btn-primary" @click="calculate" :disabled="isDisabled">
+          <button class="btn btn-primary" @click="calculate" :disabled="isDisabled" @keyup.enter="calculate">
             <font-awesome-icon icon="fa-divide" />
             計算
           </button>
@@ -91,6 +91,7 @@ watch(
 );
 
 function calculate() {
+  event.preventDefault(); // 阻止表單的預設提交行為
   if (checkEmpty()) {
     // 執行開根號
     const number = Math.pow(form.investment / form.capital, 1 / form.years);
