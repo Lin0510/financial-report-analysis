@@ -2,7 +2,6 @@
   <div class="d-flex justify-content-center">
     <div class="col-md-3">
       <vue-latex :expression="'年化報酬率 = \\sqrt[年數]{\\frac{投資總淨值}{總投入資金}}'" display-mode fontsize="18" />
-      <!-- <form> -->
         <div>
           <div class="form-group-1">
             <label for="investment">投資總淨值</label>
@@ -58,7 +57,6 @@
             清除
           </button>
         </div>
-      <!-- </form> -->
       <vue-latex :expression="result" display-mode fontsize="20" />
     </div>
   </div>
@@ -113,10 +111,9 @@ watch(
 
 // 添加0
 function addZeros(inputField, zeros) {
-  if (form.investment)
-    if (inputField === "investment") {
+    if (inputField === "investment" && form.investment) {
       form.investment += "0".repeat(zeros);
-    } else if (inputField === "capital") {
+    } else if (inputField === "capital" && form.capital) {
       form.capital += "0".repeat(zeros);
     }
 }
