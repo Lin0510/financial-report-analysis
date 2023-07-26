@@ -2,61 +2,69 @@
   <div class="d-flex justify-content-center">
     <div class="col-md-3">
       <vue-latex :expression="'年化報酬率 = \\sqrt[年數]{\\frac{投資總淨值}{總投入資金}}'" display-mode fontsize="18" />
-        <div>
-          <div class="form-group-1">
-            <label for="investment">投資總淨值</label>
-            <div class="input-group">
-              <input type="number" class="form-control" id="investment" v-model="form.investment"
-                :class="{ 'is-invalid': validate.isInvestmentEmpty }" @keyup.enter="calculate()">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" @click="addZeros('investment', 2)">00</button>
-                <button class="btn btn-outline-secondary" @click="addZeros('investment', 3)">000</button>
-              </div>
-              <div v-if="validate.isInvestmentEmpty" class="invalid-feedback">
-                投資總淨值不得為空
-              </div>
+      <div>
+        <div class="form-group-1">
+          <label for="investment">投資總淨值</label>
+          <div class="input-group">
+            <vue-number class="form-control" id="investment" v-model="form.investment"
+              :class="{ 'is-invalid': validate.isInvestmentEmpty }" @keyup.enter="calculate()" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 1)">0</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 2)">00</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 3)">000</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 4)">萬</button>
             </div>
-          </div>
-          <div class="form-group-1">
-            <label for="capital">總投入資金</label>
-            <div class="input-group">
-              <input type="number" class="form-control" id="capital" v-model="form.capital"
-                :class="{ 'is-invalid': validate.isCapitalEmpty }" @keyup.enter="calculate()">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" @click="addZeros('capital', 2)">00</button>
-                <button class="btn btn-outline-secondary" @click="addZeros('capital', 3)">000</button>
-              </div>
-              <div v-if="validate.isCapitalEmpty" class="invalid-feedback">
-                總投入資金不得為空
-              </div>
-            </div>
-          </div>
-          <div class="form-group-1">
-            <label for="years">年數</label>
-            <div class="input-group">
-              <input type="number" class="form-control" id="years" v-model="form.years"
-                :class="{ 'is-invalid': validate.isYearsEmpty }" @keyup.enter="calculate()">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" @click="setYears(1)">1年</button>
-                <button class="btn btn-outline-secondary" @click="setYears(5)">5年</button>
-                <button class="btn btn-outline-secondary" @click="setYears(10)">10年</button>
-              </div>
-              <div v-if="validate.isYearsEmpty" class="invalid-feedback">
-                年數不得為空
-              </div>
+            <div v-if="validate.isInvestmentEmpty" class="invalid-feedback">
+              投資總淨值不得為空
             </div>
           </div>
         </div>
-        <div class="button-group">
-          <button class="btn btn-primary" @click="calculate" :disabled="isDisabled">
-            <font-awesome-icon icon="fa-divide" />
-            計算
-          </button>
-          <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">
-            <font-awesome-icon icon="fa-eraser" />
-            清除
-          </button>
+        <div class="form-group-1">
+          <label for="capital">總投入資金</label>
+          <div class="input-group">
+            <vue-number class="form-control" id="capital" v-model="form.capital"
+              :class="{ 'is-invalid': validate.isCapitalEmpty }" @keyup.enter="calculate()" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" @click="addZeros('capital', 1)">0</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('capital', 2)">00</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('capital', 3)">000</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('capital', 4)">萬</button>
+            </div>
+            <div v-if="validate.isCapitalEmpty" class="invalid-feedback">
+              總投入資金不得為空
+            </div>
+          </div>
         </div>
+        <div class="form-group-1">
+          <label for="years">年數</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="years" v-model="form.years"
+              :class="{ 'is-invalid': validate.isYearsEmpty || validate.isYearGreaterThanZero }"
+              @keyup.enter="calculate()">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" @click="setYears(1)">1年</button>
+              <button class="btn btn-outline-secondary" @click="setYears(5)">5年</button>
+              <button class="btn btn-outline-secondary" @click="setYears(10)">10年</button>
+            </div>
+            <div v-if="validate.isYearsEmpty" class="invalid-feedback">
+              年數不得為空
+            </div>
+            <div v-if="validate.isYearGreaterThanZero" class="invalid-feedback">
+              年數必須大於0
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="button-group">
+        <button class="btn btn-primary" @click="calculate" :disabled="isDisabled">
+          <font-awesome-icon icon="fa-divide" />
+          計算
+        </button>
+        <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">
+          <font-awesome-icon icon="fa-eraser" />
+          清除
+        </button>
+      </div>
       <vue-latex :expression="result" display-mode fontsize="20" />
     </div>
   </div>
@@ -65,7 +73,7 @@
 <script setup>
 import { VueLatex } from "vatex";
 import { reactive, ref, watch } from "vue";
-
+import { component as VueNumber } from "@coders-tm/vue-number-format";
 const form = reactive({
   // 投資總淨值
   investment: "",
@@ -79,6 +87,7 @@ const validate = reactive({
   isInvestmentEmpty: false,
   isCapitalEmpty: false,
   isYearsEmpty: false,
+  isYearGreaterThanZero: false,
 });
 let result = ref("");
 
@@ -105,17 +114,22 @@ watch(
   (newValue) => {
     if (newValue) {
       validate.isYearsEmpty = false;
+      if (newValue < 0) {
+        validate.isYearGreaterThanZero = true;
+      } else {
+        validate.isYearGreaterThanZero = false;
+      }
     }
   }
 );
 
 // 添加0
 function addZeros(inputField, zeros) {
-    if (inputField === "investment" && form.investment) {
-      form.investment += "0".repeat(zeros);
-    } else if (inputField === "capital" && form.capital) {
-      form.capital += "0".repeat(zeros);
-    }
+  if (inputField === "investment" && form.investment) {
+    form.investment += "0".repeat(zeros);
+  } else if (inputField === "capital" && form.capital) {
+    form.capital += "0".repeat(zeros);
+  }
 }
 
 // 設置年數
@@ -174,7 +188,11 @@ function checkEmpty() {
   if (!form.years) {
     validate.isYearsEmpty = true;
     return false;
+  } else if (form.years < 1) {
+    validate.isYearGreaterThanZero = true;
+    return false;
   }
+
   return true;
 }
 

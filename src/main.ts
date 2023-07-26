@@ -20,6 +20,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import "bootstrap/dist/js/bootstrap.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import VueNumberFormat from '@coders-tm/vue-number-format'
 
 library.add(faRotateLeft);
 library.add(faCheck);
@@ -37,5 +38,6 @@ library.add(faEnvelope);
 createApp(App)
   .use(router)
   .use(VueLatex)
+  .use(VueNumberFormat)
   .component("font-awesome-icon", FontAwesomeIcon)
   .mount("#app");
