@@ -42,9 +42,11 @@
               :class="{ 'is-invalid': validate.isYearsEmpty || validate.isYearGreaterThanZero }"
               @keyup.enter="calculate()">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" @click="setYears(1)">1年</button>
-              <button class="btn btn-outline-secondary" @click="setYears(5)">5年</button>
-              <button class="btn btn-outline-secondary" @click="setYears(10)">10年</button>
+              <button class="btn btn-outline-secondary" @click="setYears(1)">1</button>
+              <button class="btn btn-outline-secondary" @click="setYears(3)">3</button>
+              <button class="btn btn-outline-secondary" @click="setYears(5)">5</button>
+              <button class="btn btn-outline-secondary" @click="setYears(7)">7</button>
+              <button class="btn btn-outline-secondary" @click="setYears(10)">10</button>
             </div>
             <div v-if="validate.isYearsEmpty" class="invalid-feedback">
               年數不得為空
