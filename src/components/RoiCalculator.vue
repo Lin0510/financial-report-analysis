@@ -4,22 +4,6 @@
       <vue-latex :expression="'年化報酬率 = \\sqrt[年數]{\\frac{投資總淨值}{總投入資金}}'" display-mode fontsize="18" />
       <div>
         <div class="form-group-1">
-          <label for="investment">投資總淨值</label>
-          <div class="input-group">
-            <vue-number class="form-control" id="investment" v-model="form.investment"
-              :class="{ 'is-invalid': validate.isInvestmentEmpty }" @keyup.enter="calculate()" />
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" @click="addZeros('investment', 1)">0</button>
-              <button class="btn btn-outline-secondary" @click="addZeros('investment', 2)">00</button>
-              <button class="btn btn-outline-secondary" @click="addZeros('investment', 3)">000</button>
-              <button class="btn btn-outline-secondary" @click="addZeros('investment', 4)">萬</button>
-            </div>
-            <div v-if="validate.isInvestmentEmpty" class="invalid-feedback">
-              投資總淨值不得為空
-            </div>
-          </div>
-        </div>
-        <div class="form-group-1">
           <label for="capital">總投入資金</label>
           <div class="input-group">
             <vue-number class="form-control" id="capital" v-model="form.capital"
@@ -32,6 +16,22 @@
             </div>
             <div v-if="validate.isCapitalEmpty" class="invalid-feedback">
               總投入資金不得為空
+            </div>
+          </div>
+        </div>
+        <div class="form-group-1">
+          <label for="investment">投資總淨值</label>
+          <div class="input-group">
+            <vue-number class="form-control" id="investment" v-model="form.investment"
+              :class="{ 'is-invalid': validate.isInvestmentEmpty }" @keyup.enter="calculate()" />
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 1)">0</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 2)">00</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 3)">000</button>
+              <button class="btn btn-outline-secondary" @click="addZeros('investment', 4)">萬</button>
+            </div>
+            <div v-if="validate.isInvestmentEmpty" class="invalid-feedback">
+              投資總淨值不得為空
             </div>
           </div>
         </div>
