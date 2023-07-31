@@ -1327,7 +1327,14 @@ function exportToCSV() {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${new Date().toLocaleDateString()}_${stock.value}財報分析`;
+  // Get the current date
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  // Construct the filename with the current date
+  const filename = `${year}${month}${day}_${stock.value}_財報分析.csv`;
+  link.download = filename;
   link.click();
   window.URL.revokeObjectURL(url);
 }
