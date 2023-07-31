@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-content-center">
     <div class="col-md-3">
-      <vue-latex :expression="'年化報酬率 = \\sqrt[年數]{\\frac{投資總淨值}{總投入資金}}'" display-mode fontsize="18" />
+      <vue-latex :expression="'年化報酬率 = \\sqrt[年數]{\\frac{投資總淨值}{總投入資金}}'" display-mode fontsize="20" />
       <div>
         <div class="form-group-1">
           <label for="capital">總投入資金</label>
@@ -67,7 +67,7 @@
           清除
         </button>
       </div>
-      <vue-latex :expression="result" display-mode fontsize="20" />
+      <vue-latex :expression="result" display-mode fontsize="22" />
     </div>
   </div>
 </template>

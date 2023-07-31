@@ -79,6 +79,10 @@
             <font-awesome-icon icon="fa-edit" />
             編輯
           </button>
+          <button type="button" class="btn btn-success" @click="exportToCSV()">
+            <font-awesome-icon icon="fa-file-csv" />
+            匯出csv
+          </button>
         </div>
       </div>
     </div>
@@ -424,7 +428,12 @@
             Reset
           </button>
         </td>
-        <td></td>
+        <td>
+          <button type="button" class="btn btn-success" @click="exportToCSV()">
+            <font-awesome-icon icon="fa-file-csv" />
+            匯出csv
+          </button>
+        </td>
       </tr>
       <tr>
         <td />
@@ -442,6 +451,7 @@ import { nextTick } from "vue";
 import { watch } from "@vue/runtime-core";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
+import Papa from "papaparse";
 import useClipboard from "vue-clipboard3";
 import Modal from "./Modal.vue";
 
@@ -1155,6 +1165,171 @@ function openUrls() {
   window.open(balanceSheetUrl.value, "_blank");
   window.open(mertricsUrl.value, "_blank");
   window.open(morningStarUrl.value, "_blank");
+}
+
+// 匯出csv
+function exportToCSV() {
+  const data = [
+    {
+      評分數據: "Divdend 股息",
+      評分標準: "10年每年持續穩定發股息",
+      給分標準: 0.5,
+      給分:
+        form.divdend1_1 == "" && form.divdend1_2 == ""
+          ? null
+          : `${form.divdend1_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "",
+      評分標準: "10年股息每年越發越多",
+      給分標準: 1,
+      給分:
+        form.divdend2_1 == "" && form.divdend2_2 == ""
+          ? null
+          : `${form.divdend2_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "",
+      評分標準: "5年股息成長率>10年股息成長率",
+      給分標準: 0.5,
+      給分:
+        form.divdend3_1 == "" && form.divdend3_2 == ""
+          ? null
+          : `${form.divdend3_1 ? "✓" : "✗"}`,
+    },
+
+    {
+      評分數據: "EPS 每股盈餘",
+      評分標準: "10年穩定成長",
+      給分標準: 1,
+      給分:
+        form.eps_1 == "" && form.eps_2 == ""
+          ? null
+          : `${form.eps_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "Shares 流通股數",
+      評分標準: "流通股數10年穩定減少",
+      給分標準: 1,
+      給分:
+        form.shares_1 == "" && form.shares_2 == ""
+          ? null
+          : `${form.shares_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "Debt / Equity 負債權益比",
+      評分標準: "D/E < 0.5",
+      給分標準: 1,
+      給分:
+        form.de_1 == "" && form.de_2 == "" ? null : `${form.de_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "ROE(％) 股東權益率",
+      評分標準: "10年: 15% < ROE < 40%",
+      給分標準: 1,
+      給分:
+        form.roe1_1 == "" && form.roe1_2 == ""
+          ? null
+          : `${form.roe1_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "",
+      評分標準: "10年 ROE < 15% 且穩定上升",
+      給分標準: 0.5,
+      給分:
+        form.roe2_1 == "" && form.roe2_2 == ""
+          ? null
+          : `${form.roe2_1 ? "✓" : "✗"}`,
+    },
+
+    {
+      評分數據: "Book Value Per Share 每股淨值",
+      評分標準: "10年穩定成長",
+      給分標準: 1,
+      給分:
+        form.bvps_1 == "" && form.bvps_2 == ""
+          ? null
+          : `${form.bvps_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "FCF 自由現金流",
+      評分標準: "10年皆為正數",
+      給分標準: 1,
+      給分:
+        form.fcf_1 == "" && form.fcf_2 == ""
+          ? null
+          : `${form.fcf_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "Net Margin(%) 淨利率",
+      評分標準: "10年 Net Margin > 10%",
+      給分標準: 1,
+      給分:
+        form.net1_1 == "" && form.net1_2 == ""
+          ? null
+          : `${form.net1_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "",
+      評分標準: "10年穩定不衰退",
+      給分標準: 0.5,
+      給分:
+        form.net2_1 == "" && form.net2_2 == ""
+          ? null
+          : `${form.net2_1 ? "✓" : "✗"}`,
+    },
+
+    {
+      評分數據: "IC 利息保障倍數",
+      評分標準: "IC > 10 或 “-”",
+      給分標準: 1,
+      給分:
+        form.ic1_1 == "" && form.ic1_2 == ""
+          ? null
+          : `${form.ic1_1 ? "✓" : "✗"}`,
+    },
+    {
+      評分數據: "",
+      評分標準: "IC > 5",
+      給分標準: 0.5,
+      給分:
+        form.ic2_1 == "" && form.ic2_2 == ""
+          ? null
+          : `${form.ic2_1 ? "✓" : "✗"}`,
+    },
+    { 評分數據: "", 評分標準: "", 給分標準: "總分", 給分: total.value },
+  ];
+  const hasNullScore = data.some((row) => {
+    return row.給分 === null;
+  });
+
+  if (!stock.value) {
+    alert("請輸入股票代碼");
+    return;
+  }
+  if (hasNullScore) {
+    alert("請在匯出CSV之前勾選所有評分");
+    return;
+  }
+  const csv = Papa.unparse(data, {
+    encoding: "utf-8",
+    quotes: true,
+    quoteChar: '"',
+    escapeChar: '"',
+    delimiter: ",",
+    header: true,
+    newline: "\r\n",
+    skipEmptyLines: true,
+  });
+  const blob = new Blob([new Uint8Array([0xef, 0xbb, 0xbf]), csv], {
+    type: "text/csv;charset=utf-8;",
+  });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${new Date().toLocaleDateString()}_${stock.value}財報分析`;
+  link.click();
+  window.URL.revokeObjectURL(url);
 }
 </script>
 <style>
