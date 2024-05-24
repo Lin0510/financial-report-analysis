@@ -627,7 +627,6 @@ let bvpsPoints = ref(0);
 let fcfPoints = ref(0);
 let divdend1Points = ref(0);
 let divdend2Points = ref(0);
-let divdend3Points = ref(0);
 let sharesPoints = ref(0);
 
 function giveScore(index: any, row: any) {
@@ -719,10 +718,6 @@ function giveScore(index: any, row: any) {
       tableData.value[11].noScore = true;
       break;
     case 13:
-      divdend3Points.value = parseFloat(row.scoreStandard);
-      row.noScore = false;
-      break;
-    case 14:
       sharesPoints.value = parseFloat(row.scoreStandard);
       row.noScore = false;
       break;
@@ -791,10 +786,6 @@ function noScore(index: any, row: any) {
       row.giveScore = false;
       break;
     case 13:
-      divdend3Points.value = 0;
-      row.giveScore = false;
-      break;
-    case 14:
       sharesPoints.value = 0;
       row.giveScore = false;
       break;
@@ -926,15 +917,6 @@ const tableData = ref([
     giveScore: false,
     noScore: false,
   },
-  {
-    indicator: "",
-    standard: "5年股息成長率 > 10年股息成長率",
-    scoreStandard: "0.5",
-    score: "",
-    url: "",
-    giveScore: false,
-    noScore: false,
-  },
   // Shares (Common) 流通股數
   {
     indicator: "Shares (Common) 流通股數",
@@ -951,12 +933,12 @@ const indicators = [
   { name: "EPS (Diluted) 每股盈餘", rowspan: 2 },
   { name: "Net Margin(%)淨利率", rowspan: 2 },
   { name: "ROE(％) 股東權益率", rowspan: 2 },
-  { name: "Dividend 股息", rowspan: 3 },
-  { name: "Shares (Common) 流通股數", rowspan: 1 },
+  { name: "IC 利息保障倍數", rowspan: 2 },
   { name: "Debt / Equity 負債權益比", rowspan: 1 },
   { name: "Book Value Per Share 每股淨值", rowspan: 1 },
   { name: "Free Cash Flow 自由現金流", rowspan: 1 },
-  { name: "IC 利息保障倍數", rowspan: 2 },
+  { name: "Dividend 股息", rowspan: 2 },
+  { name: "Shares (Common) 流通股數", rowspan: 1 },
 ];
 
 // colspan 方法
@@ -992,7 +974,7 @@ const objectSpanMethod = ({
           };
         case "Dividend 股息":
           return {
-            rowspan: 3,
+            rowspan: 2,
             colspan: 1,
           };
         default:
@@ -1024,7 +1006,6 @@ function calculateTotalScore() {
   totalScore.value =
     divdend1Points.value +
     divdend2Points.value +
-    divdend3Points.value +
     eps1Points.value +
     eps2Points.value +
     sharesPoints.value +
@@ -1079,7 +1060,6 @@ function reset() {
 
   divdend1Points.value = 0;
   divdend2Points.value = 0;
-  divdend3Points.value = 0;
   eps1Points.value = 0;
   eps2Points.value = 0;
   sharesPoints.value = 0;
