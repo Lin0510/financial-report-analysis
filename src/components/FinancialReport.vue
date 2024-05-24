@@ -211,7 +211,7 @@
     </el-table>
     <div style="margin: 20px">
       <el-row>
-        <el-col :span="24" style="background-color: #FFD966; padding: 10px">
+        <el-col :span="24" style="background-color: #ffd966; padding: 10px">
           <div
             style="
               display: flex;
@@ -632,12 +632,15 @@ let sharesPoints = ref(0);
 function giveScore(index: any, row: any) {
   switch (index) {
     // EPS
-    case 0:      
+    case 0:
       eps1Points.value = parseFloat(row.scoreStandard);
       eps2Points.value = 0;
       row.noScore = false;
       tableData.value[1].noScore = true;
       tableData.value[1].giveScore = false;
+      if (tableData.value[0].giveScore == true) {
+        eps1Points.value = 0;
+      }
       break;
     case 1:
       eps2Points.value = parseFloat(row.scoreStandard);
@@ -645,6 +648,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[0].giveScore = false;
       tableData.value[0].noScore = true;
+      if (tableData.value[1].giveScore == true) {
+        eps2Points.value = 0;
+      }
       break;
     // Net Margin
     case 2:
@@ -653,6 +659,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[3].giveScore = false;
       tableData.value[3].noScore = true;
+      if (tableData.value[2].giveScore == true) {
+        net1Points.value = 0;
+      }
       break;
     case 3:
       net2Points.value = parseFloat(row.scoreStandard);
@@ -660,6 +669,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[2].giveScore = false;
       tableData.value[2].noScore = true;
+      if (tableData.value[3].giveScore == true) {
+        net2Points.value = 0;
+      }
       break;
     // ROE
     case 4:
@@ -668,6 +680,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[5].noScore = true;
       tableData.value[5].giveScore = false;
+      if (tableData.value[4].giveScore == true) {
+        roe1Points.value = 0;
+      }
       break;
     case 5:
       roe2Points.value = parseFloat(row.scoreStandard);
@@ -675,6 +690,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[4].giveScore = false;
       tableData.value[4].noScore = true;
+      if (tableData.value[5].giveScore == true) {
+        roe2Points.value = 0;
+      }
       break;
     // IC
     case 6:
@@ -683,6 +701,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[7].noScore = true;
       tableData.value[7].giveScore = false;
+      if (tableData.value[6].giveScore == true) {
+        ic1Points.value = 0;
+      }
       break;
     case 7:
       ic2Points.value = parseFloat(row.scoreStandard);
@@ -690,21 +711,33 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[6].giveScore = false;
       tableData.value[6].noScore = true;
+      if (tableData.value[7].giveScore == true) {
+        ic2Points.value = 0;
+      }
       break;
     // D/E
     case 8:
       dePoints.value = parseFloat(row.scoreStandard);
       row.noScore = false;
+      if (tableData.value[8].giveScore == true) {
+        dePoints.value = 0;
+      }
       break;
     // BVPS
     case 9:
       bvpsPoints.value = parseFloat(row.scoreStandard);
       row.noScore = false;
+      if (tableData.value[9].giveScore == true) {
+        bvpsPoints.value = 0;
+      }
       break;
     // FCF
     case 10:
       fcfPoints.value = parseFloat(row.scoreStandard);
       row.noScore = false;
+      if (tableData.value[10].giveScore == true) {
+        fcfPoints.value = 0;
+      }
       break;
     // Dividend
     case 11:
@@ -713,6 +746,9 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[12].noScore = true;
       tableData.value[12].giveScore = false;
+      if (tableData.value[11].giveScore == true) {
+        divdend1Points.value = 0;
+      }
       break;
     case 12:
       divdend2Points.value = parseFloat(row.scoreStandard);
@@ -720,10 +756,16 @@ function giveScore(index: any, row: any) {
       row.noScore = false;
       tableData.value[11].giveScore = false;
       tableData.value[11].noScore = true;
+      if (tableData.value[12].giveScore == true) {
+        divdend2Points.value = 0;
+      }
       break;
     case 13:
       sharesPoints.value = parseFloat(row.scoreStandard);
       row.noScore = false;
+      if (tableData.value[13].giveScore == true) {
+        sharesPoints.value = 0;
+      }
       break;
   }
 }
@@ -1022,6 +1064,8 @@ function calculateTotalScore() {
     net2Points.value +
     ic1Points.value +
     ic2Points.value;
+  console.log("totalScore: " + totalScore.value);
+  console.log("eps1Points: " + eps1Points.value);
 }
 // =================================================================
 // 複製
