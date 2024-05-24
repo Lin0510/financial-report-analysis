@@ -632,7 +632,7 @@ let sharesPoints = ref(0);
 function giveScore(index: any, row: any) {
   switch (index) {
     // EPS
-    case 0:
+    case 0:      
       eps1Points.value = parseFloat(row.scoreStandard);
       eps2Points.value = 0;
       row.noScore = false;
@@ -651,11 +651,15 @@ function giveScore(index: any, row: any) {
       net1Points.value = parseFloat(row.scoreStandard);
       net2Points.value = 0;
       row.noScore = false;
+      tableData.value[3].giveScore = false;
+      tableData.value[3].noScore = true;
       break;
     case 3:
       net2Points.value = parseFloat(row.scoreStandard);
       net1Points.value = 0;
       row.noScore = false;
+      tableData.value[2].giveScore = false;
+      tableData.value[2].noScore = true;
       break;
     // ROE
     case 4:
