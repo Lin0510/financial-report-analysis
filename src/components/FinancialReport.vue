@@ -460,6 +460,7 @@ async function searchStock() {
       const xnasValuationUrl = `/xnas/${stockSymbol}/valuation`;
       const xnysValuationUrl = `/xnys/${stockSymbol}/valuation`;
       const batsValuationUrl = `/bats/${stockSymbol}/valuation`;
+      const pinxValuationUrl = `/pinx/${stockSymbol}/valuation`;
 
       try {
         const isXnasValid = await checkURL(xnasValuationUrl);
@@ -482,6 +483,18 @@ async function searchStock() {
               morningStarFinancialsUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/financials`;
               morningStarDividendUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/dividends`;
               morningStarValuationUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/valuation`;
+            } else {
+              morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
+              morningStarDividendUrl.value = morningStarUrl.value;
+              morningStarFinancialsUrl.value = morningStarUrl.value;
+              morningStarValuationUrl.value = morningStarUrl.value;
+            }
+            const isPinxValid = await checkURL(pinxValuationUrl);
+            if (isPinxValid) {
+              morningStarUrl.value = `${morningStarIndex}stocks${pinxValuationUrl}`;
+              morningStarFinancialsUrl.value = `${morningStarIndex}stocks/pinx/${stockSymbol}/financials`;
+              morningStarDividendUrl.value = `${morningStarIndex}stocks/pinx/${stockSymbol}/dividends`;
+              morningStarValuationUrl.value = `${morningStarIndex}stocks/pinx/${stockSymbol}/valuation`;
             } else {
               morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
               morningStarDividendUrl.value = morningStarUrl.value;
