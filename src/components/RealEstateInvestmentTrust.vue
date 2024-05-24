@@ -1313,8 +1313,8 @@ td,
 th {
   vertical-align: middle;
 }
-td a {
-  /* color: rgba(0, 0, 0, 0.8); */
+/* td a {
+  color: rgba(0, 0, 0, 0.8);
   color: #4f4f4f;
   font-family: Lato;
   font-size: 10pt;
@@ -1323,7 +1323,7 @@ td a {
   display: block;
   text-decoration: none;
   text-transform: uppercase;
-}
+} */
 
 .SMN_effect-15 a:before,
 .SMN_effect-15 a:after {

@@ -1,15 +1,29 @@
 <template>
-  <nav>
-    <router-link to="/instructions" class="third after">使用說明</router-link> |
-    <router-link to="/report" class="third after">財報分析</router-link> |
-    <router-link to="/moat" class="third after">護城河優勢</router-link> |
-    <router-link to="/risk" class="third after">風險扣分</router-link> |
-    <router-link to="/reits" class="third after">REITs評分標準</router-link> |
-    <router-link to="/bank" class="third after">銀行股評分標準</router-link> |
-    <router-link to="/roi" class="third after">年化報酬率計算</router-link>
-  </nav>
+  <el-menu
+    :default-active="activeIndex"
+    class="el-menu-demo"
+    mode="horizontal"
+    :router="true"
+  >
+    <el-menu-item index="instructions">使用說明</el-menu-item>
+    <el-sub-menu index="report">
+      <template #title>美股財報分析</template>
+      <el-menu-item index="report">財報關鍵指標評分</el-menu-item>
+      <el-menu-item index="moat">護城河優勢</el-menu-item>
+      <el-menu-item index="risk">風險扣分</el-menu-item>
+    </el-sub-menu>
+    <el-menu-item index="reits">REITs評分標準</el-menu-item>
+    <el-menu-item index="bank">銀行股評分標準</el-menu-item>
+    <el-menu-item index="roi">年化報酬率計算</el-menu-item>
+  </el-menu>
+  <div class="h-6" />
+
   <router-view />
 </template>
+<script lang="ts" setup>
+import { ref } from "vue";
+const activeIndex = ref("1");
+</script>
 
 <style>
 #app {
@@ -19,7 +33,6 @@
   text-align: center;
   user-select: none;
 }
-
 nav {
   margin-bottom: 30px;
   padding: 1x;

@@ -1,40 +1,66 @@
 <template>
-  <Modal v-model="closeableModal" closeable header="解決方法">
-    <p>
-      如果輸入完股票代碼後，點擊MorningStar網址沒辦法直接跳轉到該股票公司數據頁面，
-      這邊需要前往這個網站<a style="text-decoration: none" target="_blank"
-        href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
-      並點擊 Request temporary access to the demo server，點選完之後會跳出You currently have temporary access to the demo server.，
-      此時MorningStar網址就可以正常跳轉了
-    </p>
-  </Modal>
-  <Modal v-model="errorModal" closeable header="cors錯誤">
-    <p>
-      MorningStar 無法導向 {{ stock }} 股票代碼的頁面，若要成功導向 {{ stock }} 股票代碼頁面
-      請前往這個網站 <a style="text-decoration: none" target="_blank"
-        href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/">cors-anywhere</a>，
-      並點擊 Request temporary access to the demo server，點選完之後會跳出 You currently have temporary access to the demo server.，
-      現在查詢 MorningStar 就可以導向 {{ stock }} 股票代碼的頁面了
-    </p>
-  </Modal>
-  <div class="container" v-if="!isEdit">
+  <el-dialog v-model="dialogTableVisible" title="解決方法" width="1000">
+    如果輸入完股票代碼後，點擊 MorningStar
+    網址沒辦法直接跳轉到該股票公司數據頁面， 這邊需要前往這個網站<a
+      style="text-decoration: none"
+      target="_blank"
+      href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/"
+    >
+      cors-anywhere</a
+    >， 並點擊 Request temporary access to the demo server，點選完之後會跳出 You
+    currently have temporary access to the demo server.， 此時 MorningStar
+    網址就可以正常跳轉了
+  </el-dialog>
+  <el-dialog v-model="errorVisible" title="cors錯誤" width="1000">
+    MorningStar 無法導向 {{ stock }} 股票代碼的頁面，若要成功導向
+    {{ stock }} 股票代碼頁面 請前往這個網站
+    <a
+      style="text-decoration: none"
+      target="_blank"
+      href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/"
+      >cors-anywhere</a
+    >， 並點擊 Request temporary access to the demo server，點選完之後會跳出 You
+    currently have temporary access to the demo server.， 現在查詢 MorningStar
+    就可以導向 {{ stock }} 股票代碼的頁面了
+  </el-dialog>
+  <div class="mt-3 container" v-if="!isEdit">
     <div class="row justify-content-center">
       <div class="col-md-4 col-sm-10">
         <div class="input-group has-validation">
-          <input v-model="stock" @keypress="isLetterOrDot($event)" maxlength="5" class="form-control"
-            placeholder="請輸入股票代碼，只能輸入英文字母和." :class="{ 'is-invalid': isStockEmpty || !stockExsits }"
-            :disabled="isDisabled" @keyup.enter="confirm()" ref="stockField" />
+          <input
+            v-model="stock"
+            @keypress="isLetterOrDot($event)"
+            maxlength="5"
+            class="form-control"
+            placeholder="請輸入股票代碼，只能輸入英文字母和."
+            :class="{ 'is-invalid': isStockEmpty || !stockExsits }"
+            :disabled="isDisabled"
+            @keyup.enter="searchStock()"
+            ref="stockField"
+          />
           <div v-if="isStockEmpty || !stockExsits" class="invalid-feedback">
             {{ errorMessage }}
           </div>
         </div>
         <div class="input-group-append button-group">
-          <button class="btn btn-primary" @click="confirm" :disabled="isDisabled">
-            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right: 10px" />
-            <font-awesome-icon icon="fa-magnifying-glass" />
+          <button
+            class="btn btn-primary"
+            @click="searchStock()"
+            :disabled="isDisabled"
+          >
+            <span
+              v-if="isLoading"
+              class="spinner-border spinner-border-sm"
+              style="margin-right: 10px"
+            />
+            <font-awesome-icon icon="fa-magnifying-glass" v-if="!isLoading" />
             查詢
           </button>
-          <button class="btn btn-secondary" @click="clear" :disabled="isDisabled">
+          <button
+            class="btn btn-secondary"
+            @click="clear"
+            :disabled="isDisabled"
+          >
             <font-awesome-icon icon="fa-eraser" />
             清除
           </button>
@@ -51,22 +77,41 @@
         </div>
         <div class="form-group">
           <label for="nameLabel">股票名稱</label>
-          <input id="nameLabel" class="form-control" :value="stockName" disabled />
+          <input
+            id="nameLabel"
+            class="form-control"
+            :value="stockName"
+            disabled
+          />
         </div>
         <div class="form-group">
           <label for="priceLabel">現在股價</label>
           <div class="input-group">
-            <input id="priceLabel" type="number" class="form-control" :class="{ 'is-invalid': isCallLimitReached }"
-              :value="stockPrice" :disabled="!isCallLimitReached" />
-            <!-- <span v-show="!isCallLimitReached" class="input-group-text">{{ currency }}</span> -->
+            <input
+              id="priceLabel"
+              type="number"
+              class="form-control"
+              :class="{ 'is-invalid': isCallLimitReached }"
+              :value="stockPrice"
+              :disabled="!isCallLimitReached"
+            />
             <div v-if="isCallLimitReached" class="invalid-feedback">
               {{ stockPriceErrorMessage }}
             </div>
-            <div v-else class="input-groutruep-append" style="padding: 0 0.5rem">
-              <button class="btn" :class="{
+            <div
+              v-else
+              class="input-groutruep-append"
+              style="padding: 0 0.5rem"
+            >
+              <button
+                class="btn"
+                :class="{
                   'btn-outline-secondary': !isCopied,
                   'btn-outline-success': isCopied,
-                }" type="button" @click="touchCopy()">
+                }"
+                type="button"
+                @click="touchCopy()"
+              >
                 <font-awesome-icon v-if="isCopied" icon="fa-paste" />
                 <font-awesome-icon v-else icon="fa-clipboard" />
                 {{ isCopied ? "已複製" : "複製股價" }}
@@ -87,830 +132,204 @@
       </div>
     </div>
   </div>
-
   <table class="table">
     <thead>
       <tr>
-        <th class="table-dark">財報分析</th>
         <th>
-          <button id="modalButton" @click="closeableModal = true" type="button" class="btn btn-warning mb-2">
-            <font-awesome-icon icon="fa-warning" />
-            MorningStar異常solution
-          </button>
+          <el-button
+            plain
+            @click="dialogTableVisible = true"
+            size="large"
+            type="warning"
+            :icon="WarnTriangleFilled"
+          >
+            MorningStar 異常跳轉 Solution
+          </el-button>
         </th>
         <th></th>
         <th>
-          <button class="btn btn-sm" :class="{
-              'btn-outline-danger': !isNoDivdend,
-              'btn-outline-dark': isNoDivdend,
-            }" @click="noDivdends()">
-            <font-awesome-icon v-show="!isNoDivdend" icon="fa-xmark" />
-            {{ isNoDivdend ? "股息不給分" : "不發股息" }}
-          </button>
-        </th>
-        <th>
-          <button class="btn btn-outline-success btn-sm" @click="openUrls()" :disabled="isDisabled">
-            <span v-if="isLoading" class="spinner-border spinner-border-sm" style="margin-right: 10px" />
+          <button
+            class="btn btn-outline-success btn-sm"
+            @click="openUrls()"
+            :disabled="isDisabled"
+          >
+            <span
+              v-if="isLoading"
+              class="spinner-border spinner-border-sm"
+              style="margin-right: 10px"
+            />
             <font-awesome-icon icon="fa-window-restore" />
             一鍵開啟財報網址
           </button>
         </th>
       </tr>
     </thead>
-    <tbody class="f_body">
-      <tr class="title">
-        <th>評分數據</th>
-        <th>評分標準</th>
-        <th>給分標準</th>
-        <th>給分</th>
-        <th>網址</th>
-      </tr>
-      <tr>
-        <th rowspan="3">Divdend 股息</th>
-        <td>10年每年持續穩定發股息</td>
-        <td>0.5</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.divdend1_1" @click="divdend1GetPoint()" type="checkbox"
-              id="divdend1_1" />
-            <label class="form-check-label" for="divdend1_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.divdend1_2" type="checkbox" id="divdend1_2"
-              @click="divdend1NotGetPoint()" />
-            <label class="form-check-label" for="divdend1_2">不給分</label>
-          </div>
-        </td>
-        <td rowspan="2" class="SMN_effect-15">
-          <div v-if="isLoading">
-            <span class="disabled">
-              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
-              stockrow
-            </span>
-          </div>
-          <div v-else>
-            <a :href="stockrowUrl" target="_blank">stockrow</a>
-            <a v-show="isShowDividendUrl" :href="morningStarDividendUrl" target="_blank">morningstar Dividends</a>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>10年股息每年越發越多</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.divdend2_1" @click="divdend2GetPoint()" type="checkbox"
-              id="divdend2_1" />
-            <label class="form-check-label" for="divdend2_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.divdend2_2" type="checkbox" id="divdend2_2"
-              @click="divdend2NotGetPoint()" />
-            <label class="form-check-label" for="divdend2_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>5年股息成長率 > 10年股息成長率</td>
-        <td>0.5</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.divdend3_1" @click="divdend3GetPoint()" type="checkbox"
-              id="divdend3_1" />
-            <label class="form-check-label" for="divdend3_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.divdend3_2" type="checkbox" id="divdend3_2"
-              @click="divdend3NotGetPoint()" />
-            <label class="form-check-label" for="divdend3_2">不給分</label>
-          </div>
-        </td>
-        <td class="SMN_effect-15">
-          <div v-if="isLoading">
-            <span class="disabled">
-              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
-              gurufocus
-            </span>
-          </div>
-          <div v-else>
-            <a :href="gurufocusUrl" target="_blank">gurufocus</a>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">EPS (Diluted) 每股盈餘</th>
-        <td>10年穩定成長</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.eps_1" @click="epsGetPoint()" type="checkbox" id="eps_1" />
-            <label class="form-check-label" for="eps_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.eps_2" type="checkbox" id="eps_2" @click="epsNotGetPoint()" />
-            <label class="form-check-label" for="eps_2">不給分</label>
-          </div>
-        </td>
-        <td class="SMN_effect-15">
-          <div v-if="isLoading">
-            <span class="disabled">
-              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
-              stockrow Income
-            </span>
-          </div>
-          <div v-else>
-            <a :href="incomeUrl" target="_blank">stockrow Income</a>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Shares (Common) 流通股數</th>
-        <td>流通股數10年穩定減少</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.shares_1" @click="sharesGetPoint()" type="checkbox"
-              id="shares_1" />
-            <label class="form-check-label" for="shares_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.shares_2" type="checkbox" id="shares_2"
-              @click="sharesNotGetPoint()" />
-            <label class="form-check-label" for="shares_2">不給分</label>
-          </div>
-        </td>
-        <td class="SMN_effect-15">
-          <div v-if="isLoading">
-            <span class="disabled">
-              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
-              stockrow Balance Sheet
-            </span>
-          </div>
-          <div v-else>
-            <a :href="balanceSheetUrl" target="_blank">stockrow Balance Sheet</a>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Debt / Equity 負債權益比</th>
-        <td>D/E &lt; 0.5</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.de_1" @click="deGetPoint()" type="checkbox" id="de_1" />
-            <label class="form-check-label" for="de_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.de_2" type="checkbox" id="de_2" @click="deNotGetPoint()" />
-            <label class="form-check-label" for="de_2">不給分</label>
-          </div>
-        </td>
-        <td rowspan="7" class="SMN_effect-15">
-          <div v-if="isLoading">
-            <span class="disabled">
-              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
-              stockrow Metrics
-            </span>
-          </div>
-          <div v-else>
-            <a :href="mertricsUrl" target="_blank">stockrow Metrics</a>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th rowspan="2">ROE(％) 股東權益率</th>
-        <td>10年: 15% &lt; ROE &lt; 40%</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe1_1" @click="roe1GetPoint()" type="checkbox" id="roe1_1" />
-            <label class="form-check-label" for="roe1_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe1_2" type="checkbox" id="roe1_2"
-              @click="roe1NotGetPoint()" />
-            <label class="form-check-label" for="roe1_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>10年 ROE &lt; 15% 且穩定上升</td>
-        <td>0.5</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe2_1" @click="roe2GetPoint()" type="checkbox" id="roe2_1" />
-            <label class="form-check-label" for="roe2_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.roe2_2" type="checkbox" id="roe2_2"
-              @click="roe2NotGetPoint()" />
-            <label class="form-check-label" for="roe2_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Book Value Per Share 每股淨值</th>
-        <td>10年穩定成長</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.bvps_1" @click="bvpsGetPoint()" type="checkbox" id="bvps_1" />
-            <label class="form-check-label" for="bvps_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.bvps_2" type="checkbox" id="bvps_2"
-              @click="bvpsNotGetPoint()" />
-            <label class="form-check-label" for="bvps_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">Free Cash Flow 自由現金流</th>
-        <td>10年皆為正數</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.fcf_1" @click="fcfGetPoint()" type="checkbox" id="fcf_1" />
-            <label class="form-check-label" for="fcf_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.fcf_2" type="checkbox" id="fcf_2" @click="fcfNotGetPoint()" />
-            <label class="form-check-label" for="fcf_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th rowspan="2">Net Margin(%)淨利率</th>
-        <td>10年 Net Margin > 10%</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.net1_1" @click="net1GetPoint()" type="checkbox" id="net1_1" />
-            <label class="form-check-label" for="net1_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.net1_2" type="checkbox" id="net1_2"
-              @click="net1NotGetPoint()" />
-            <label class="form-check-label" for="net1_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>10年穩定不衰退</td>
-        <td>0.5</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.net2_1" @click="net2GetPoint()" type="checkbox" id="net2_1" />
-            <label class="form-check-label" for="net2_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.net2_2" type="checkbox" id="net2_2"
-              @click="net2NotGetPoint()" />
-            <label class="form-check-label" for="net2_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <th rowspan="2">IC 利息保障倍數</th>
-        <td>IC > 10 或 “-”</td>
-        <td>1</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.ic1_1" @click="ic1GetPoint()" type="checkbox" id="ic1_1" />
-            <label class="form-check-label" for="ic1_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.ic1_2" type="checkbox" id="ic1_2" @click="ic1NotGetPoint()" />
-            <label class="form-check-label" for="ic1_2">不給分</label>
-          </div>
-        </td>
-        <td rowspan="2" class="SMN_effect-15">
-          <div v-if="isLoading">
-            <span class="disabled">
-              <span class="spinner-grow spinner-grow-sm" style="margin-right: 3px" />
-              Morningstar Key Ratio Data
-            </span>
-          </div>
-          <div v-else>
-            <a :href="morningStarUrl" target="_blank">Morningstar Key Ratio Data</a>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>IC > 5</td>
-        <td>0.5</td>
-        <td>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.ic2_1" @click="ic2GetPoint()" type="checkbox" id="ic2_1" />
-            <label class="form-check-label" for="ic2_1">給分</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" v-model="form.ic2_2" type="checkbox" id="ic2_2" @click="ic2NotGetPoint()" />
-            <label class="form-check-label" for="ic2_2">不給分</label>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td></td>
-        <td style="background-color: #f6b3bb">總分</td>
-        <td style="background-color: #f6b3bb">{{ total }}</td>
-        <td>
-          <button class="btn btn-sm" :class="{
-              'btn-outline-dark': !isTotalCopied,
-              'btn-success': isTotalCopied,
-            }" type="button" @click="touchCopyTotal()" style="margin-right: 7px">
-            <font-awesome-icon v-if="isTotalCopied" icon="fa-paste" />
-            <font-awesome-icon v-else icon="fa-clipboard" />
-            {{ isTotalCopied ? "已複製" : "複製總分" }}
-          </button>
-          <button type="button" class="btn btn-primary" @click="reset()">
-            <font-awesome-icon icon="fa-rotate-left" />
-            Reset
-          </button>
-        </td>
-        <td>
-          <button type="button" class="btn btn-success" @click="exportToCSV()">
-            <font-awesome-icon icon="fa-file-csv" />
-            匯出csv
-          </button>
-        </td>
-      </tr>
-      <tr>
-        <td />
-        <td />
-        <td />
-        <td />
-        <td />
-      </tr>
-    </tbody>
   </table>
+  <div class="container">
+    <el-table
+      :data="tableData"
+      style="width: 100%; margin-top: 20px"
+      :span-method="objectSpanMethod"
+      border
+    >
+      <el-table-column prop="indicator" label="評分指標" />
+      <el-table-column prop="standard" label="評分標準" />
+      <el-table-column prop="scoreStandard" label="給分標準" width="90px" />
+      <el-table-column prop="score" label="給分">
+        <template #default="scope">
+          <el-checkbox
+            v-model="scope.row.giveScore"
+            @click="giveScore(scope.$index, scope.row)"
+            >給分</el-checkbox
+          >
+          <el-checkbox
+            v-model="scope.row.noScore"
+            @click="noScore(scope.$index, scope.row)"
+            >不給分</el-checkbox
+          >
+        </template>
+      </el-table-column>
+      <el-table-column prop="url" label="評分網址">
+        <template #default="scope">
+          <el-link
+            v-if="isLoading"
+            disabled
+            :underline="false"
+            v-model="scope.row.noScore"
+            >{{ scope.row.url }}</el-link
+          >
+          <el-link
+            v-else
+            @click="generateLink(scope.row.url)"
+            :underline="false"
+            v-model="scope.row.noScore"
+            target="_blank"
+            >{{ scope.row.url }}</el-link
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    <div style="margin: 20px">
+      <el-row>
+        <el-col :span="24" style="background-color: #FFD966; padding: 10px">
+          <div
+            style="
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span style="padding-right: 30%">總分 </span>
+            <span>{{ totalScore }}</span>
+          </div>
+        </el-col>
+        <el-col
+          :span="24"
+          style="
+            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+          "
+        >
+          <el-button
+            v-if="!isTotalCopied"
+            :icon="CopyDocument"
+            type="Default"
+            @click="touchCopyTotal()"
+            >複製</el-button
+          >
+          <el-button :icon="CloseBold" type="info" @click="reset()"
+            >清除</el-button
+          >
+          <el-button :icon="Download" type="success" @click="exportToCSV()"
+            >匯出 csv</el-button
+          >
+        </el-col>
+      </el-row>
+    </div>
+  </div>
 </template>
-<script setup>
-import { reactive, ref } from "@vue/reactivity";
+
+<script lang="ts" setup>
+import { ElCheckbox, TableColumnCtx } from "element-plus";
+import { cloneVNode, ref, watch } from "vue";
 import { nextTick } from "vue";
-import { watch } from "@vue/runtime-core";
+import {
+  Search,
+  CopyDocument,
+  CloseBold,
+  Download,
+  WarnTriangleFilled,
+} from "@element-plus/icons-vue";
+import useClipboard from "vue-clipboard3";
+import Papa from "papaparse";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import Papa from "papaparse";
-import useClipboard from "vue-clipboard3";
+import { Eleme } from "@element-plus/icons-vue";
 import Modal from "./Modal.vue";
-
-const closeableModal = ref(false);
-const errorModal = ref(false);
-
-let form = reactive({
-  divdend1_1: "",
-  divdend1_2: "",
-  divdend2_1: "",
-  divdend2_2: "",
-  divdend3_1: "",
-  divdend3_2: "",
-  eps_1: "",
-  eps_2: "",
-  shares_1: "",
-  shares_2: "",
-  de_1: "",
-  de_2: "",
-  roe1_1: "",
-  roe1_2: "",
-  roe2_1: "",
-  roe2_2: "",
-  bvps_1: "",
-  bvps_2: "",
-  fcf_1: "",
-  fcf_2: "",
-  net1_1: "",
-  net1_2: "",
-  net2_1: "",
-  net2_2: "",
-  ic1_1: "",
-  ic1_2: "",
-  ic2_1: "",
-  ic2_2: "",
-  total: 0,
-});
-
-let divdend1Points = ref(0);
-let divdend2Points = ref(0);
-let divdend3Points = ref(0);
-let epsPoints = ref(0);
-let sharesPoints = ref(0);
-let dePoints = ref(0);
-let roe1Points = ref(0);
-let roe2Points = ref(0);
-let bvpsPoints = ref(0);
-let fcfPoints = ref(0);
-let net1Points = ref(0);
-let net2Points = ref(0);
-let ic1Points = ref(0);
-let ic2Points = ref(0);
-let total = ref(0);
-
-// Divdend
-let isShowDividendUrl = ref(false);
-watch([() => form.divdend1_1, () => form.divdend2_1], (newValues) => {
-  if (newValues.some((value) => value)) {
-    isNoDivdend.value = false;
-    isShowDividendUrl.value = true;
-  } else {
-    isShowDividendUrl.value = false;
-  }
-});
-
-watch(
-  [() => form.divdend1_1, () => form.divdend2_1, () => form.divdend3_1],
-  (newValues) => {
-    console.log(newValues);
-    if (newValues.every((value) => value === false)) {
-      isNoDivdend.value = true;
-      isShowDividendUrl.value = false;
-    }
-  }
-);
-
-watch(
-  () => form.divdend1_1,
-  (newValue) => {
-    if (newValue) {
-      form.divdend2_2 = true;
-      form.divdend2_1 = false;
-      divdend2Points.value = 0;
-    }
-  }
-);
-
-watch(
-  () => form.divdend2_1,
-  (newValue) => {
-    if (newValue) {
-      form.divdend1_2 = true;
-      form.divdend1_1 = false;
-      divdend1Points.value = 0;
-    }
-  }
-);
-// ROE
-watch(
-  () => form.roe1_1,
-  (newValue) => {
-    if (newValue) {
-      form.roe2_2 = true;
-      form.roe2_1 = false;
-      roe2Points.value = 0;
-    }
-  }
-);
-watch(
-  () => form.roe2_1,
-  (newValue) => {
-    if (newValue) {
-      form.roe1_2 = true;
-      form.roe1_1 = false;
-      roe1Points.value = 0;
-    }
-  }
-);
-// IC
-watch(
-  () => form.ic1_1,
-  (newValue) => {
-    if (newValue) {
-      form.ic2_2 = true;
-      form.ic2_1 = false;
-      ic2Points.value = 0;
-    }
-  }
-);
-watch(
-  () => form.ic2_1,
-  (newValue) => {
-    if (newValue) {
-      form.ic1_2 = true;
-      form.ic1_1 = false;
-      ic1Points.value = 0;
-    }
-  }
-);
-
-const isNoDivdend = ref(false);
-function noDivdends() {
-  divdend1Points.value = 0;
-  divdend2Points.value = 0;
-  divdend3Points.value = 0;
-
-  form.divdend1_1 = false;
-  form.divdend2_1 = false;
-  form.divdend3_1 = false;
-
-  if (!form.divdend1_2 || !form.divdend2_2 || !form.divdend3_2) {
-    form.divdend1_2 = true;
-    form.divdend2_2 = true;
-    form.divdend3_2 = true;
-    isNoDivdend.value = true;
-  } else {
-    form.divdend1_2 = false;
-    form.divdend2_2 = false;
-    form.divdend3_2 = false;
-    isNoDivdend.value = false;
-  }
-}
-
-// Divdend
-// 10年每年持續穩定發股息
-function divdend1GetPoint() {
-  form.divdend1_2 = false;
-  divdend1Points.value = 0.5;
-  if (form.divdend1_1 == true) {
-    divdend1Points.value = 0;
-  }
-}
-
-function divdend1NotGetPoint() {
-  form.divdend1_1 = false;
-  divdend1Points.value = 0;
-}
-// 10年股息每年越發越多
-function divdend2GetPoint() {
-  form.divdend2_2 = false;
-  divdend2Points.value = 1;
-  if (form.divdend2_1 == true) {
-    divdend2Points.value = 0;
-  }
-}
-
-function divdend2NotGetPoint() {
-  form.divdend2_1 = false;
-  divdend2Points.value = 0;
-}
-
-function divdend3GetPoint() {
-  form.divdend3_2 = false;
-  divdend3Points.value = 0.5;
-  if (form.divdend3_1 == true) {
-    divdend3Points.value = 0;
-  }
-}
-
-function divdend3NotGetPoint() {
-  form.divdend3_1 = false;
-  divdend3Points.value = 0;
-}
-
-// EPS
-function epsGetPoint() {
-  form.eps_2 = false;
-  epsPoints.value = 1;
-  if (form.eps_1 == true) {
-    epsPoints.value = 0;
-  }
-}
-
-function epsNotGetPoint() {
-  form.eps_1 = false;
-  epsPoints.value = 0;
-}
-
-// Shares
-function sharesGetPoint() {
-  form.shares_2 = false;
-  sharesPoints.value = 1;
-  if (form.shares_1 == true) {
-    sharesPoints.value = 0;
-  }
-}
-
-function sharesNotGetPoint() {
-  form.shares_1 = false;
-  sharesPoints.value = 0;
-}
-
-// D/E
-function deGetPoint() {
-  form.de_2 = false;
-  dePoints.value = 1;
-  if (form.de_1 == true) {
-    dePoints.value = 0;
-  }
-}
-
-function deNotGetPoint() {
-  form.de_1 = false;
-  dePoints.value = 0;
-}
-
-// ROE
-function roe1GetPoint() {
-  form.roe1_2 = false;
-  roe1Points.value = 1;
-  if (form.roe1_1 == true) {
-    roe1Points.value = 0;
-  }
-}
-
-function roe1NotGetPoint() {
-  form.roe1_1 = false;
-  roe1Points.value = 0;
-}
-
-function roe2GetPoint() {
-  form.roe2_2 = false;
-  roe2Points.value = 0.5;
-  if (form.roe2_1 == true) {
-    roe2Points.value = 0;
-  }
-}
-
-function roe2NotGetPoint() {
-  form.roe2_1 = false;
-  roe2Points.value = 0;
-}
-
-// BVPS
-function bvpsGetPoint() {
-  form.bvps_2 = false;
-  bvpsPoints.value = 1;
-  if (form.bvps_1 == true) {
-    bvpsPoints.value = 0;
-  }
-}
-
-function bvpsNotGetPoint() {
-  form.bvps_1 = false;
-  bvpsPoints.value = 0;
-}
-
-// FCF
-function fcfGetPoint() {
-  form.fcf_2 = false;
-  fcfPoints.value = 1;
-  if (form.fcf_1 == true) {
-    fcfPoints.value = 0;
-  }
-}
-
-function fcfNotGetPoint() {
-  form.fcf_1 = false;
-  fcfPoints.value = 0;
-}
-
-// Net Margin
-function net1GetPoint() {
-  form.net1_2 = false;
-  net1Points.value = 1;
-  if (form.net1_1 == true) {
-    net1Points.value = 0;
-  }
-}
-
-function net1NotGetPoint() {
-  form.net1_1 = false;
-  net1Points.value = 0;
-}
-
-function net2GetPoint() {
-  form.net2_2 = false;
-  net2Points.value = 0.5;
-  if (form.net2_1 == true) {
-    net2Points.value = 0;
-  }
-}
-
-function net2NotGetPoint() {
-  form.net2_1 = false;
-  net2Points.value = 0;
-}
-
-// IC利息保障倍數
-function ic1GetPoint() {
-  form.ic1_2 = false;
-  ic1Points.value = 1;
-  if (form.ic1_1 == true) {
-    ic1Points.value = 0;
-  }
-}
-
-function ic1NotGetPoint() {
-  form.ic1_1 = false;
-  ic1Points.value = 0;
-}
-
-function ic2GetPoint() {
-  form.ic2_2 = false;
-  ic2Points.value = 0.5;
-  if (form.ic2_1 == true) {
-    ic2Points.value = 0;
-  }
-}
-
-function ic2NotGetPoint() {
-  form.ic2_1 = false;
-  ic2Points.value = 0;
-}
-
-watch(form, () => {
-  count();
-});
-
-function count() {
-  total.value =
-    divdend1Points.value +
-    divdend2Points.value +
-    divdend3Points.value +
-    epsPoints.value +
-    sharesPoints.value +
-    dePoints.value +
-    roe1Points.value +
-    roe2Points.value +
-    bvpsPoints.value +
-    fcfPoints.value +
-    net1Points.value +
-    net2Points.value +
-    ic1Points.value +
-    ic2Points.value;
-}
-
-function reset() {
-  form.divdend1_1 = "";
-  form.divdend1_2 = "";
-  form.divdend2_1 = "";
-  form.divdend2_2 = "";
-  form.divdend3_1 = "";
-  form.divdend3_2 = "";
-  form.eps_1 = "";
-  form.eps_2 = "";
-  form.shares_1 = "";
-  form.shares_2 = "";
-  form.de_1 = "";
-  form.de_2 = "";
-  form.roe1_1 = "";
-  form.roe1_2 = "";
-  form.roe2_1 = "";
-  form.roe2_2 = "";
-  form.bvps_1 = "";
-  form.bvps_2 = "";
-  form.fcf_1 = "";
-  form.fcf_2 = "";
-  form.net1_1 = "";
-  form.net1_2 = "";
-  form.net2_1 = "";
-  form.net2_2 = "";
-  form.ic1_1 = "";
-  form.ic1_2 = "";
-  form.ic2_1 = "";
-  form.ic2_2 = "";
-  divdend1Points.value = 0;
-  divdend2Points.value = 0;
-  divdend3Points.value = 0;
-  epsPoints.value = 0;
-  sharesPoints.value = 0;
-  dePoints.value = 0;
-  roe1Points.value = 0;
-  roe2Points.value = 0;
-  bvpsPoints.value = 0;
-  fcfPoints.value = 0;
-  net1Points.value = 0;
-  net2Points.value = 0;
-  ic1Points.value = 0;
-  ic2Points.value = 0;
-  isNoDivdend.value = false;
-}
+import axios from "axios";
 
 // =======================================================================
 // url
-const stockRowIndex = "https://stockrow.com/";
-const gurufocusIndex = "https://www.gurufocus.com/";
+// const stockRowIndex = "https://stockrow.com/";
+// const gurufocusIndex = "https://www.gurufocus.com/";
 const morningStarIndex = "https://www.morningstar.com/";
-const stockrowUrl = ref(stockRowIndex);
-const incomeUrl = ref(stockRowIndex);
-const balanceSheetUrl = ref(stockRowIndex);
-const mertricsUrl = ref(stockRowIndex);
-const gurufocusUrl = ref(gurufocusIndex);
+const stockAnalysisInedx = "https://stockanalysis.com/";
+// const stockrowUrl = ref(stockRowIndex);
+// const incomeUrl = ref(stockRowIndex);
+// const balanceSheetUrl = ref(stockRowIndex);
+// const mertricsUrl = ref(stockRowIndex);
+// const gurufocusUrl = ref(gurufocusIndex);
 const morningStarUrl = ref(morningStarIndex);
+const stockAnalysisUrl = ref(stockAnalysisInedx);
+const morningStarFinancialsUrl = ref(morningStarIndex);
+const morningStarValuationUrl = ref(morningStarIndex);
 const morningStarDividendUrl = ref(morningStarIndex);
 // -------------------------------------------
 // stock api
-const AlphaVantageNameAPI = (stockCode) => {
+const AlphaVantageNameAPI = (stockCode: string) => {
   return `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${stockCode}&apikey=8FYMDC697PL6LEEL`;
 };
-const AlphaVantageGlobalAPI = (stockCode) => {
+const AlphaVantageGlobalAPI = (stockCode: string) => {
   return `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=LP46XK632CAP8PVK`;
 };
-const IEXCloudAPI = (stockCode) => {
+const IEXCloudAPI = (stockCode: string) => {
   return `https://api.iex.cloud/v1/data/core/quote/${stockCode}?token=pk_a1bf9b4aef2045e2bcff3f6eb3bff015`;
 };
-const PolygonAPI = (stockCode) => {
-  return `https://api.polygon.io/v1/last_quote/stocks/${stockTicker}?apiKey=FwKVpAWvGdWPLQSgeDMnQC3aaxzvGtDg`;
+const PolygonAPI = (stockCode: string) => {
+  return `https://api.polygon.io/v1/last_quote/stocks/${stockCode}?apiKey=FwKVpAWvGdWPLQSgeDMnQC3aaxzvGtDg`;
+};
+const finnhubNameAPI = (stockCode: string) => {
+  return `https://finnhub.io/api/v1/stock/profile2?symbol=${stockCode}&token=cp7v0m1r01qi8q89cl60cp7v0m1r01qi8q89cl6g`;
+};
+const finnhubAPI = (stockCode: string) => {
+  return `https://finnhub.io/api/v1/quote?symbol=${stockCode}&token=cp7v0m1r01qi8q89cl60cp7v0m1r01qi8q89cl6g`;
 };
 // =======================================================================
+
+interface Reports {
+  indicator: "";
+  standard: "";
+  scoreStandard: "";
+  score: "";
+  url: "";
+}
+
+interface SpanMethodProps {
+  row: Reports;
+  column: TableColumnCtx<Reports>;
+  rowIndex: number;
+  columnIndex: number;
+}
+
 // 股票代碼
 const stock = ref("");
 // 股票名稱
 const stockName = ref("");
 // 股票價格
 const stockPrice = ref("");
-// 股票貨幣
-const currency = ref("");
-
 // 是否切換編輯
 const isEdit = ref(false);
 // 股票代碼是否未填
@@ -931,7 +350,8 @@ const rule = {
 };
 const v$ = useVuelidate(rule, { stock });
 
-async function confirm() {
+// 查詢股價
+async function searchStock() {
   if (stock.value === "") {
     isStockEmpty.value = true;
     errorMessage.value = "請輸入股票代碼";
@@ -974,16 +394,30 @@ async function confirm() {
     // AlphaVantage API
     // ======================================
     // #region
-    const AlphaVantageNameResponse = await fetch(
-      AlphaVantageNameAPI(stockCode)
-    );
-    const nameData = await AlphaVantageNameResponse.json();
-
-    if (nameData.bestMatches && nameData.bestMatches.length > 0) {
+    // const AlphaVantageNameResponse = await fetch(
+    //   AlphaVantageNameAPI(stockCode)
+    // );
+    // const nameData = await AlphaVantageNameResponse.json();
+    // if (nameData.bestMatches && nameData.bestMatches.length > 0) {
+    //   stockExsits.value = true;
+    //   const matches = nameData.bestMatches;
+    //   const name = matches[0]["2. name"];
+    //   stockName.value = name;
+    // } else {
+    //   // 處理data為空的情况
+    //   stockExsits.value = false;
+    //   errorMessage.value = "查無股票代碼";
+    // }
+    // #endregion
+    // ======================================
+    // Finnhub API
+    // ======================================
+    // #region
+    const profileResponse = await axios.get(finnhubNameAPI(stockCode));
+    const companyName = profileResponse.data.name;
+    if (companyName) {
       stockExsits.value = true;
-      const matches = nameData.bestMatches;
-      const name = matches[0]["2. name"];
-      stockName.value = name;
+      stockName.value = companyName;
     } else {
       // 處理data為空的情况
       stockExsits.value = false;
@@ -993,57 +427,36 @@ async function confirm() {
 
     if (stockExsits.value) {
       // 查詢股價
-      const GlobalResponse = await fetch(AlphaVantageGlobalAPI(stockCode));
-      const GlobalData = await GlobalResponse.json();
-      console.log(GlobalData);
+      const priceResponse = await fetch(finnhubAPI(stockCode));
+      const priceData = await priceResponse.json();
       // 如果有Note代表一分鐘查詢超過五次了
-      if (GlobalData["Note"]) {
-        isCallLimitReached.value = true;
-        stockPrice.value = "";
-        stockPriceErrorMessage.value = "每分鐘最多查詢5次，請稍後再試";
-      }
+      // if (GlobalData["Note"]) {
+      //   isCallLimitReached.value = true;
+      //   stockPrice.value = "";
+      //   stockPriceErrorMessage.value = "每分鐘最多查詢5次，請稍後再試";
+      // }
 
       // 取出股票的價格
-      if (GlobalData["Global Quote"]) {
-        const price = GlobalData["Global Quote"]["05. price"];
-        stockPrice.value = Number.parseFloat(price).toFixed(2);
+      if (priceData.c == 0) {
+        // 處理data為空的情况
+        stockExsits.value = false;
+        errorMessage.value = "查無股票代碼";
+      } else {
+        stockExsits.value = true;
+        stockName.value = stockCode;
+        stockPrice.value = priceData.c;
       }
 
+      let stockSymbol = stock.value;
       // 修改url
-      stockrowUrl.value = stockRowIndex + stock.value;
-      incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
-      balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
-      mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
-      gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
+      stockAnalysisUrl.value =
+        stockAnalysisInedx + "stocks/" + stockSymbol + "/financials/";
+      // stockrowUrl.value = stockRowIndex + stock.value;
+      // incomeUrl.value = stockrowUrl.value + "/financials/income/annual";
+      // balanceSheetUrl.value = stockrowUrl.value + "/financials/balance/annual";
+      // mertricsUrl.value = stockrowUrl.value + "/financials/metrics/annual";
+      // gurufocusUrl.value = `https://www.gurufocus.com/stock/${stock.value}/dividend`;
 
-      // 查詢morningStar網址，xnas/xnys/bats
-      async function checkURL(url) {
-        try {
-          // 開發環境使用
-          // const response = await fetch("/api" + url, { method: "HEAD" });
-          const response = await fetch(
-            "https://cors-anywhere.herokuapp.com/https://www.morningstar.com/stocks" +
-              url,
-            { method: "HEAD" }
-          );
-          if (response.ok) {
-            return true;
-          } else {
-            if (response.status == 404) {
-              console.log(`查無此網站:${url}`);
-            } else {
-              throw new Error(`Fetch failed with status ${response.status}`);
-            }
-          }
-        } catch (error) {
-          morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
-          morningStarDividendUrl.value = morningStarUrl.value;
-          errorModal.value = true;
-          console.error(error);
-        }
-      }
-
-      const stockSymbol = stock.value;
       const xnasValuationUrl = `/xnas/${stockSymbol}/valuation`;
       const xnysValuationUrl = `/xnys/${stockSymbol}/valuation`;
       const batsValuationUrl = `/bats/${stockSymbol}/valuation`;
@@ -1052,26 +465,36 @@ async function confirm() {
         const isXnasValid = await checkURL(xnasValuationUrl);
         if (isXnasValid) {
           morningStarUrl.value = `${morningStarIndex}stocks${xnasValuationUrl}`;
+          morningStarFinancialsUrl.value = `${morningStarIndex}stocks/xnas/${stockSymbol}/financials`;
           morningStarDividendUrl.value = `${morningStarIndex}stocks/xnas/${stockSymbol}/dividends`;
+          morningStarValuationUrl.value = `${morningStarIndex}stocks/xnas/${stockSymbol}/valuation`;
         } else {
           const isXnysValid = await checkURL(xnysValuationUrl);
           if (isXnysValid) {
             morningStarUrl.value = `${morningStarIndex}stocks${xnysValuationUrl}`;
+            morningStarFinancialsUrl.value = `${morningStarIndex}stocks/xnys/${stockSymbol}/financials`;
             morningStarDividendUrl.value = `${morningStarIndex}stocks/xnys/${stockSymbol}/dividends`;
+            morningStarValuationUrl.value = `${morningStarIndex}stocks/xnys/${stockSymbol}/valuation`;
           } else {
             const isBatsValid = await checkURL(batsValuationUrl);
             if (isBatsValid) {
               morningStarUrl.value = `${morningStarIndex}stocks${batsValuationUrl}`;
+              morningStarFinancialsUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/financials`;
               morningStarDividendUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/dividends`;
+              morningStarValuationUrl.value = `${morningStarIndex}stocks/bats/${stockSymbol}/valuation`;
             } else {
               morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
               morningStarDividendUrl.value = morningStarUrl.value;
+              morningStarFinancialsUrl.value = morningStarUrl.value;
+              morningStarValuationUrl.value = morningStarUrl.value;
             }
           }
         }
       } catch (error) {
         morningStarUrl.value = `${morningStarIndex}search?query=${stockSymbol}`;
+        morningStarFinancialsUrl.value = morningStarUrl.value;
         morningStarDividendUrl.value = morningStarUrl.value;
+        morningStarValuationUrl.value = morningStarUrl.value;
         console.error(error);
       }
 
@@ -1082,11 +505,27 @@ async function confirm() {
     }
   } catch (error) {
     morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
+    morningStarFinancialsUrl.value = morningStarUrl.value;
     morningStarDividendUrl.value = morningStarUrl.value;
+    morningStarValuationUrl.value = morningStarUrl.value;
     console.log(error);
   } finally {
     isLoading.value = false;
     isDisabled.value = false;
+  }
+}
+
+// 檢查input框
+function isLetterOrDot(e: any) {
+  // 獲取字元
+  let char = String.fromCharCode(e.keyCode);
+  // 正則表達式，只允許英文字母和點號
+  const regex = /^[a-zA-Z.]*$/;
+  if (regex.test(char)) {
+    return true;
+  } else {
+    // 如果不匹配，不添加到input框
+    e.preventDefault();
   }
 }
 
@@ -1101,7 +540,7 @@ function clear() {
 }
 
 // 編輯
-const stockField = ref(null);
+const stockField = ref();
 function edit() {
   isEdit.value = false;
   isCopied.value = false;
@@ -1110,31 +549,505 @@ function edit() {
   isCallLimitReached.value = false;
   reset();
   nextTick(() => {
-    stockField.value.focus();
-    stockField.value.setSelectionRange(0, stock.value.length);
+    (stockField.value as HTMLInputElement).focus();
+    (stockField.value as HTMLInputElement).setSelectionRange(
+      0,
+      stock.value.length
+    );
   });
 }
 
-function isLetterOrDot(e) {
-  // 獲取字元
-  let char = String.fromCharCode(e.keyCode);
-  // 正則表達式，只允許英文字母和點號
-  const regex = /^[a-zA-Z.]*$/;
-  if (regex.test(char)) {
-    return true;
-  } else {
-    // 如果不匹配，不添加到input框
-    e.preventDefault();
+const dialogTableVisible = ref(false);
+const errorVisible = ref(false);
+// 查詢morningStar網址，xnas/xnys/bats
+async function checkURL(url: string) {
+  try {
+    // 開發環境使用
+    // const response = await fetch("/api" + url, { method: "HEAD" });
+    const response = await fetch(
+      "https://cors-anywhere.herokuapp.com/https://www.morningstar.com/stocks" +
+        url,
+      { method: "HEAD" }
+    );
+    if (response.ok) {
+      return true;
+    } else {
+      if (response.status == 404) {
+        console.log(`查無此網站:${url}`);
+      } else if (response.status == 403) {
+        morningStarUrl.value = `${morningStarIndex}search?query=${stock.value}`;
+        morningStarFinancialsUrl.value = morningStarUrl.value;
+        morningStarDividendUrl.value = morningStarUrl.value;
+        morningStarValuationUrl.value = morningStarUrl.value;
+        errorVisible.value = true;
+      } else {
+        throw new Error(`Fetch failed with status ${response.status}`);
+      }
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
 
+function generateLink(url: string) {
+  console.log(url);
+
+  if (url.includes("Stock")) {
+    window.open(stockAnalysisUrl.value, "_blank");
+  }
+  if (url.includes("Financials")) {
+    window.open(morningStarFinancialsUrl.value, "_blank");
+  }
+  if (url.includes("Valuation")) {
+    window.open(morningStarValuationUrl.value, "_blank");
+  }
+  if (url.includes("Dividends")) {
+    window.open(morningStarDividendUrl.value, "_blank");
+  }
+}
+
+function openUrls() {
+  window.open(stockAnalysisUrl.value, "_blank");
+  window.open(morningStarFinancialsUrl.value, "_blank");
+  window.open(morningStarValuationUrl.value, "_blank");
+  window.open(morningStarDividendUrl.value, "_blank");
+}
+
+const totalScore = ref(0);
+let eps1Points = ref(0);
+let eps2Points = ref(0);
+let net1Points = ref(0);
+let net2Points = ref(0);
+let roe1Points = ref(0);
+let roe2Points = ref(0);
+let ic1Points = ref(0);
+let ic2Points = ref(0);
+let dePoints = ref(0);
+let bvpsPoints = ref(0);
+let fcfPoints = ref(0);
+let divdend1Points = ref(0);
+let divdend2Points = ref(0);
+let divdend3Points = ref(0);
+let sharesPoints = ref(0);
+
+function giveScore(index: any, row: any) {
+  switch (index) {
+    // EPS
+    case 0:
+      eps1Points.value = parseFloat(row.scoreStandard);
+      eps2Points.value = 0;
+      row.noScore = false;
+      tableData.value[1].noScore = true;
+      tableData.value[1].giveScore = false;
+      break;
+    case 1:
+      eps2Points.value = parseFloat(row.scoreStandard);
+      eps1Points.value = 0;
+      row.noScore = false;
+      tableData.value[0].giveScore = false;
+      tableData.value[0].noScore = true;
+      break;
+    // Net Margin
+    case 2:
+      net1Points.value = parseFloat(row.scoreStandard);
+      net2Points.value = 0;
+      row.noScore = false;
+      break;
+    case 3:
+      net2Points.value = parseFloat(row.scoreStandard);
+      net1Points.value = 0;
+      row.noScore = false;
+      break;
+    // ROE
+    case 4:
+      roe1Points.value = parseFloat(row.scoreStandard);
+      roe2Points.value = 0;
+      row.noScore = false;
+      tableData.value[5].noScore = true;
+      tableData.value[5].giveScore = false;
+      break;
+    case 5:
+      roe2Points.value = parseFloat(row.scoreStandard);
+      roe1Points.value = 0;
+      row.noScore = false;
+      tableData.value[4].giveScore = false;
+      tableData.value[4].noScore = true;
+      break;
+    // IC
+    case 6:
+      ic1Points.value = parseFloat(row.scoreStandard);
+      ic2Points.value = 0;
+      row.noScore = false;
+      tableData.value[7].noScore = true;
+      tableData.value[7].giveScore = false;
+      break;
+    case 7:
+      ic2Points.value = parseFloat(row.scoreStandard);
+      ic1Points.value = 0;
+      row.noScore = false;
+      tableData.value[6].giveScore = false;
+      tableData.value[6].noScore = true;
+      break;
+    // D/E
+    case 8:
+      dePoints.value = parseFloat(row.scoreStandard);
+      row.noScore = false;
+      break;
+    // BVPS
+    case 9:
+      bvpsPoints.value = parseFloat(row.scoreStandard);
+      row.noScore = false;
+      break;
+    // FCF
+    case 10:
+      fcfPoints.value = parseFloat(row.scoreStandard);
+      row.noScore = false;
+      break;
+    // Dividend
+    case 11:
+      divdend1Points.value = parseFloat(row.scoreStandard);
+      divdend2Points.value = 0;
+      row.noScore = false;
+      tableData.value[12].noScore = true;
+      tableData.value[12].giveScore = false;
+      break;
+    case 12:
+      divdend2Points.value = parseFloat(row.scoreStandard);
+      divdend1Points.value = 0;
+      row.noScore = false;
+      tableData.value[11].giveScore = false;
+      tableData.value[11].noScore = true;
+      break;
+    case 13:
+      divdend3Points.value = parseFloat(row.scoreStandard);
+      row.noScore = false;
+      break;
+    case 14:
+      sharesPoints.value = parseFloat(row.scoreStandard);
+      row.noScore = false;
+      break;
+  }
+}
+function noScore(index: any, row: any) {
+  switch (index) {
+    // EPS
+    case 0:
+      row.giveScore = false;
+      eps1Points.value = 0;
+      break;
+    case 1:
+      row.giveScore = false;
+      eps2Points.value = 0;
+      break;
+    // Net Margin
+    case 2:
+      net1Points.value = 0;
+      row.giveScore = false;
+      break;
+    case 3:
+      row.giveScore = false;
+      net2Points.value = 0;
+      break;
+    // ROE
+    case 4:
+      row.giveScore = false;
+      roe1Points.value = 0;
+      break;
+    case 5:
+      row.giveScore = false;
+      roe2Points.value = 0;
+      break;
+    // IC
+    case 6:
+      ic1Points.value = 0;
+      row.giveScore = false;
+      break;
+    case 7:
+      ic2Points.value = 0;
+      row.giveScore = false;
+      break;
+    // D/E
+    case 8:
+      dePoints.value = 0;
+      row.giveScore = false;
+      break;
+    // BVPS
+    case 9:
+      bvpsPoints.value = 0;
+      row.giveScore = false;
+      break;
+    // FCF
+    case 10:
+      fcfPoints.value = 0;
+      row.giveScore = false;
+      break;
+    // Dividend
+    case 11:
+      divdend1Points.value = 0;
+      row.giveScore = false;
+      break;
+    case 12:
+      divdend2Points.value = 0;
+      row.giveScore = false;
+      break;
+    case 13:
+      divdend3Points.value = 0;
+      row.giveScore = false;
+      break;
+    case 14:
+      sharesPoints.value = 0;
+      row.giveScore = false;
+      break;
+  }
+}
+const tableData = ref([
+  // EPS (Diluted) 每股盈餘
+  {
+    indicator: "EPS (Diluted) 每股盈餘",
+    standard: "10年穩定成長",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Financials （5年）",
+    giveScore: false,
+    noScore: false,
+  },
+  {
+    indicator: "",
+    standard: "最少5年內有 > 0",
+    scoreStandard: "0.5",
+    score: "",
+    url: "Stock Analysis Financials（10年）",
+    giveScore: false,
+    noScore: false,
+  },
+  // Net Margin(%)淨利率
+  {
+    indicator: "Net Margin(%)淨利率",
+    standard: "10年 Net Margin > 10%",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Valuation - Operating and Efficiency",
+    giveScore: false,
+    noScore: false,
+  },
+  {
+    indicator: "",
+    standard: "10年穩定不衰退",
+    scoreStandard: "0.5",
+    score: "",
+    url: "",
+    giveScore: false,
+    noScore: false,
+  },
+  // ROE(％) 股東權益率
+  {
+    indicator: "ROE(％) 股東權益率",
+    standard: "10年: 15% < ROE < 40%",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Valuation - Operating and Efficiency",
+    giveScore: false,
+    noScore: false,
+  },
+  {
+    indicator: "",
+    standard: "10年 ROE < 15% 且穩定上升",
+    scoreStandard: "0.5",
+    score: "",
+    url: "",
+    giveScore: false,
+    noScore: false,
+  },
+  // IC 利息保障倍數
+  {
+    indicator: "IC 利息保障倍數",
+    standard: "IC > 10 或 “-”",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Valuation - Operating and Efficiency",
+    giveScore: false,
+    noScore: false,
+  },
+  {
+    indicator: "",
+    standard: "IC > 5",
+    scoreStandard: "0.5",
+    score: "",
+    url: "",
+    giveScore: false,
+    noScore: false,
+  },
+  // Debt / Equity 負債權益比
+  {
+    indicator: "Debt / Equity 負債權益比",
+    standard: "D/E < 0.5",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Valuation - Financial Health",
+    giveScore: false,
+    noScore: false,
+  },
+  // Book Value Per Share 每股淨值
+  {
+    indicator: "Book Value Per Share 每股淨值",
+    standard: "10年穩定成長",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Valuation - Financial Health",
+    giveScore: false,
+    noScore: false,
+  },
+  // Free Cash Flow 自由現金流
+  {
+    indicator: "Free Cash Flow 自由現金流",
+    standard: "10年皆為正數",
+    scoreStandard: "1",
+    score: "",
+    url: "Morningstar Valuation - Cash Flow",
+    giveScore: false,
+    noScore: false,
+  },
+  // Dividend 股息
+  {
+    indicator: "Dividend 股息",
+    standard: "10年每年持續穩定發股息",
+    scoreStandard: "0.5",
+    score: "",
+    url: "Morningstar Dividends",
+    giveScore: false,
+    noScore: false,
+  },
+  {
+    indicator: "",
+    standard: "10年股息每年越發越多",
+    scoreStandard: "1",
+    score: "",
+    url: "",
+    giveScore: false,
+    noScore: false,
+  },
+  {
+    indicator: "",
+    standard: "5年股息成長率 > 10年股息成長率",
+    scoreStandard: "0.5",
+    score: "",
+    url: "",
+    giveScore: false,
+    noScore: false,
+  },
+  // Shares (Common) 流通股數
+  {
+    indicator: "Shares (Common) 流通股數",
+    standard: "流通股數10年穩定減少",
+    scoreStandard: "1",
+    score: "",
+    url: "Stock Analysis - Financials - income",
+    giveScore: false,
+    noScore: false,
+  },
+]);
+
+const indicators = [
+  { name: "EPS (Diluted) 每股盈餘", rowspan: 2 },
+  { name: "Net Margin(%)淨利率", rowspan: 2 },
+  { name: "ROE(％) 股東權益率", rowspan: 2 },
+  { name: "Dividend 股息", rowspan: 3 },
+  { name: "Shares (Common) 流通股數", rowspan: 1 },
+  { name: "Debt / Equity 負債權益比", rowspan: 1 },
+  { name: "Book Value Per Share 每股淨值", rowspan: 1 },
+  { name: "Free Cash Flow 自由現金流", rowspan: 1 },
+  { name: "IC 利息保障倍數", rowspan: 2 },
+];
+
+// colspan 方法
+const objectSpanMethod = ({
+  row,
+  column,
+  rowIndex,
+  columnIndex,
+}: SpanMethodProps) => {
+  switch (columnIndex) {
+    case 0:
+      for (const indicator of indicators) {
+        if (row.indicator === indicator.name) {
+          return {
+            rowspan: indicator.rowspan,
+            colspan: 1,
+          };
+        }
+      }
+      return {
+        rowspan: 0,
+        colspan: 0,
+      };
+    case 4:
+      const indicatorName = row.indicator.toString();
+      switch (indicatorName) {
+        case "Net Margin(%)淨利率":
+        case "ROE(％) 股東權益率":
+        case "IC 利息保障倍數":
+          return {
+            rowspan: 2,
+            colspan: 1,
+          };
+        case "Dividend 股息":
+          return {
+            rowspan: 3,
+            colspan: 1,
+          };
+        default:
+          return {
+            rowspan: 1,
+            colspan: 1,
+          };
+      }
+    default:
+      return {
+        rowspan: 1,
+        colspan: 1,
+      };
+  }
+};
+
+// =============================================================
+// watch
+// =============================================================
+watch(
+  tableData,
+  () => {
+    calculateTotalScore();
+  },
+  { deep: true }
+);
+
+function calculateTotalScore() {
+  totalScore.value =
+    divdend1Points.value +
+    divdend2Points.value +
+    divdend3Points.value +
+    eps1Points.value +
+    eps2Points.value +
+    sharesPoints.value +
+    dePoints.value +
+    roe1Points.value +
+    roe2Points.value +
+    bvpsPoints.value +
+    fcfPoints.value +
+    net1Points.value +
+    net2Points.value +
+    ic1Points.value +
+    ic2Points.value;
+}
+// =================================================================
+// 複製
+// =================================================================
 // 初始化剪貼板功能
 const { toClipboard } = useClipboard();
 
 const isCopied = ref(false);
 async function touchCopy() {
   try {
-    await toClipboard(JSON.stringify(stockPrice.value));
+    await toClipboard(stockPrice.value);
     isCopied.value = true;
     setTimeout(() => {
       isCopied.value = false;
@@ -1144,10 +1057,10 @@ async function touchCopy() {
   }
 }
 
-const isTotalCopied = ref(false);
+let isTotalCopied = ref(false);
 async function touchCopyTotal() {
   try {
-    await toClipboard(JSON.stringify(total.value));
+    await toClipboard(JSON.stringify(totalScore.value));
     isTotalCopied.value = true;
     setTimeout(() => {
       isTotalCopied.value = false;
@@ -1157,149 +1070,49 @@ async function touchCopyTotal() {
   }
 }
 
-// 一鍵開啟網址
-function openUrls() {
-  window.open(stockrowUrl.value, "_blank");
-  window.open(gurufocusUrl.value, "_blank");
-  window.open(incomeUrl.value, "_blank");
-  window.open(balanceSheetUrl.value, "_blank");
-  window.open(mertricsUrl.value, "_blank");
-  window.open(morningStarUrl.value, "_blank");
+// reset
+function reset() {
+  tableData.value.forEach((row) => {
+    row.giveScore = false;
+    row.noScore = false;
+  });
+
+  divdend1Points.value = 0;
+  divdend2Points.value = 0;
+  divdend3Points.value = 0;
+  eps1Points.value = 0;
+  eps2Points.value = 0;
+  sharesPoints.value = 0;
+  dePoints.value = 0;
+  roe1Points.value = 0;
+  roe2Points.value = 0;
+  bvpsPoints.value = 0;
+  fcfPoints.value = 0;
+  net1Points.value = 0;
+  net2Points.value = 0;
+  ic1Points.value = 0;
+  ic2Points.value = 0;
+
+  // isNoDivdend.value = false;
 }
 
 // 匯出csv
 function exportToCSV() {
-  const data = [
-    {
-      評分數據: "Divdend 股息",
-      評分標準: "10年每年持續穩定發股息",
-      給分標準: 0.5,
-      給分:
-        form.divdend1_1 == "" && form.divdend1_2 == ""
-          ? null
-          : `${form.divdend1_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "",
-      評分標準: "10年股息每年越發越多",
-      給分標準: 1,
-      給分:
-        form.divdend2_1 == "" && form.divdend2_2 == ""
-          ? null
-          : `${form.divdend2_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "",
-      評分標準: "5年股息成長率>10年股息成長率",
-      給分標準: 0.5,
-      給分:
-        form.divdend3_1 == "" && form.divdend3_2 == ""
-          ? null
-          : `${form.divdend3_1 ? "✓" : "✗"}`,
-    },
-
-    {
-      評分數據: "EPS 每股盈餘",
-      評分標準: "10年穩定成長",
-      給分標準: 1,
-      給分:
-        form.eps_1 == "" && form.eps_2 == ""
-          ? null
-          : `${form.eps_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "Shares 流通股數",
-      評分標準: "流通股數10年穩定減少",
-      給分標準: 1,
-      給分:
-        form.shares_1 == "" && form.shares_2 == ""
-          ? null
-          : `${form.shares_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "Debt / Equity 負債權益比",
-      評分標準: "D/E < 0.5",
-      給分標準: 1,
-      給分:
-        form.de_1 == "" && form.de_2 == "" ? null : `${form.de_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "ROE(％) 股東權益率",
-      評分標準: "10年: 15% < ROE < 40%",
-      給分標準: 1,
-      給分:
-        form.roe1_1 == "" && form.roe1_2 == ""
-          ? null
-          : `${form.roe1_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "",
-      評分標準: "10年 ROE < 15% 且穩定上升",
-      給分標準: 0.5,
-      給分:
-        form.roe2_1 == "" && form.roe2_2 == ""
-          ? null
-          : `${form.roe2_1 ? "✓" : "✗"}`,
-    },
-
-    {
-      評分數據: "Book Value Per Share 每股淨值",
-      評分標準: "10年穩定成長",
-      給分標準: 1,
-      給分:
-        form.bvps_1 == "" && form.bvps_2 == ""
-          ? null
-          : `${form.bvps_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "FCF 自由現金流",
-      評分標準: "10年皆為正數",
-      給分標準: 1,
-      給分:
-        form.fcf_1 == "" && form.fcf_2 == ""
-          ? null
-          : `${form.fcf_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "Net Margin(%) 淨利率",
-      評分標準: "10年 Net Margin > 10%",
-      給分標準: 1,
-      給分:
-        form.net1_1 == "" && form.net1_2 == ""
-          ? null
-          : `${form.net1_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "",
-      評分標準: "10年穩定不衰退",
-      給分標準: 0.5,
-      給分:
-        form.net2_1 == "" && form.net2_2 == ""
-          ? null
-          : `${form.net2_1 ? "✓" : "✗"}`,
-    },
-
-    {
-      評分數據: "IC 利息保障倍數",
-      評分標準: "IC > 10 或 “-”",
-      給分標準: 1,
-      給分:
-        form.ic1_1 == "" && form.ic1_2 == ""
-          ? null
-          : `${form.ic1_1 ? "✓" : "✗"}`,
-    },
-    {
-      評分數據: "",
-      評分標準: "IC > 5",
-      給分標準: 0.5,
-      給分:
-        form.ic2_1 == "" && form.ic2_2 == ""
-          ? null
-          : `${form.ic2_1 ? "✓" : "✗"}`,
-    },
-    { 評分數據: "", 評分標準: "", 給分標準: "總分", 給分: total.value },
-  ];
-  const hasNullScore = data.some((row) => {
+  const csvData = tableData.value.map((row) => {
+    return {
+      評分數據: row.indicator,
+      評分標準: row.standard,
+      給分標準: row.scoreStandard,
+      給分: row.giveScore ? "✓" : row.noScore ? "✗" : "",
+    };
+  });
+  csvData.push({
+    評分數據: "",
+    評分標準: "總分",
+    給分標準: totalScore.value.toString(),
+    給分: "",
+  });
+  const hasNullScore = csvData.some((row) => {
     return row.給分 === null;
   });
 
@@ -1311,7 +1124,7 @@ function exportToCSV() {
     alert("請在匯出CSV之前勾選所有評分");
     return;
   }
-  const csv = Papa.unparse(data, {
+  const csv = Papa.unparse(csvData, {
     encoding: "utf-8",
     quotes: true,
     quoteChar: '"',
@@ -1338,115 +1151,78 @@ function exportToCSV() {
   link.click();
   window.URL.revokeObjectURL(url);
 }
+// const Row = ({ rowData, rowIndex, cells, columns }) => {
+//   const indicatorName = rowData.indicator;
+//   const indicator = indicators.find((item) => {
+//     return item.name === indicatorName;
+//   });
+
+//   if (indicator) {
+//     const { rowspan } = indicator;
+//     const cell = cells[0];
+//     const style = {
+//       ...cell.props.style,
+//       height: `${rowspan * 50 - 1}px`,
+//       alignSelf: "flex-start",
+//       zIndex: 1,
+//     };
+
+//     cells[0] = cloneVNode(cell, { style });
+//   }
+
+//   return cells;
+// };
+
+// const Row = ({ rowData, rowIndex, cells, columns }) => {
+//   const indicatorName = rowData.indicator;
+//   const indicator = indicators.find((item) => {
+//     return item.name === indicatorName;
+//   });
+
+//   if (indicator) {
+//     const { rowspan } = indicator;
+//     const cell = cells[0];
+//     const style = {
+//       ...cell.props.style,
+//       height: `${rowspan * 50 - 1}px`,
+//       alignSelf: "flex-start",
+//       zIndex: 1,
+//     };
+
+//     cells[0] = cloneVNode(cell, { style });
+//   }
+
+//   // 根據特定欄位來設置樣式
+//   cells.forEach((cell, index) => {
+//     const dataKey = columns[index].dataKey;
+//     if (dataKey !== "indicator") {
+//       let style = {
+//         ...cell.props.style,
+//         backgroundColor: dataKey === "score" ? "white" : "#E8EEFB",
+//       };
+//       cells[index] = cloneVNode(cell, { style });
+//     }
+//   });
+
+//   return cells;
+// };
 </script>
-<style>
-td,
-th {
-  vertical-align: middle;
+<style scoped>
+.el-button .custom-loading .circular {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  animation: loading-rotate 2s linear infinite;
 }
-td a {
-  color: #4f4f4f;
-  font-family: Lato;
-  font-size: 10pt;
-  font-weight: bold;
-  position: relative;
-  display: block;
-  text-decoration: none;
-  text-transform: uppercase;
+.el-button .custom-loading .circular .path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: var(--el-button-text-color);
+  stroke-linecap: round;
 }
-
-.SMN_effect-15 a:before,
-.SMN_effect-15 a:after {
-  display: inline-block;
-  opacity: 0;
-  -webkit-transition: -webkit-transform 0.3s, opacity 0.2s;
-  -moz-transition: -moz-transform 0.3s, opacity 0.2s;
-  transition: transform 0.3s, opacity 0.2s;
-}
-
-.SMN_effect-15 a:before {
-  margin-right: 10px;
-  content: "[";
-  -webkit-transform: translateX(20px);
-  -moz-transform: translateX(20px);
-  transform: translateX(20px);
-}
-
-.SMN_effect-15 a:after {
-  margin-left: 10px;
-  content: "]";
-  -webkit-transform: translateX(-20px);
-  -moz-transform: translateX(-20px);
-  transform: translateX(-20px);
-}
-
-.SMN_effect-15 a:hover:before,
-.SMN_effect-15 a:hover:after,
-.SMN_effect-15 a:focus:before,
-.SMN_effect-15 a:focus:after {
-  opacity: 1;
-  -webkit-transform: translateX(0px);
-  -moz-transform: translateX(0px);
-  transform: translateX(0px);
-}
-
-.title {
-  background-color: #aebad2;
-}
-
-.table .f_body tr:first-child th,
-.table .f_body tr:nth-child(2) th,
-.table .f_body tr:nth-child(5) th,
-.table .f_body tr:nth-child(6) th,
-.table .f_body tr:nth-child(7) th,
-.table .f_body tr:nth-child(8) th,
-.table .f_body tr:nth-child(10) th,
-.table .f_body tr:nth-child(11) th,
-.table .f_body tr:nth-child(12) th,
-.table .f_body tr:nth-child(14) th {
-  background-color: #aebad2;
-}
-
-.table .f_body tr:nth-child(2),
-.table .f_body tr:nth-child(3),
-.table .f_body tr:nth-child(4),
-.table .f_body tr:nth-child(5),
-.table .f_body tr:nth-child(6),
-.table .f_body tr:nth-child(7),
-.table .f_body tr:nth-child(8),
-.table .f_body tr:nth-child(9),
-.table .f_body tr:nth-child(10),
-.table .f_body tr:nth-child(11),
-.table .f_body tr:nth-child(12),
-.table .f_body tr:nth-child(13),
-.table .f_body tr:nth-child(14),
-.table .f_body tr:nth-child(15) {
-  background-color: rgb(232, 238, 251);
-}
-
-.table .f_body tr:nth-child(2) td:nth-child(4),
-.table .f_body tr:nth-child(3) td:nth-child(3),
-.table .f_body tr:nth-child(4) td:nth-child(3),
-.table .f_body tr:nth-child(5) td:nth-child(4),
-.table .f_body tr:nth-child(6) td:nth-child(4),
-.table .f_body tr:nth-child(7) td:nth-child(4),
-.table .f_body tr:nth-child(8) td:nth-child(4),
-.table .f_body tr:nth-child(9) td:nth-child(3),
-.table .f_body tr:nth-child(10) td:nth-child(4),
-.table .f_body tr:nth-child(11) td:nth-child(4),
-.table .f_body tr:nth-child(12) td:nth-child(4),
-.table .f_body tr:nth-child(13) td:nth-child(3),
-.table .f_body tr:nth-child(14) td:nth-child(4),
-.table .f_body tr:nth-child(15) td:nth-child(3) {
-  background-color: #fff;
-}
-
-.error-message {
-  white-space: nowrap;
-}
-
-.button-group button {
-  margin-top: 10px;
-  margin-right: 10px;
+.el-input.is-error {
+  border-color: red;
 }
 </style>

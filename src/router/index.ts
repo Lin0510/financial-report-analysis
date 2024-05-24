@@ -4,6 +4,7 @@ import Moat from "../components/Moat.vue";
 import Risk from "../components/Risk.vue";
 import Instructions from "../components/Instructions.vue";
 import Reits from "../components/RealEstateInvestmentTrust.vue";
+// import Test from "../components/Test.vue";
 import Bank from "../components/Bank.vue";
 import Roi from "../components/RoiCalculator.vue";
 const routes: Array<RouteRecordRaw> = [
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "home",
     component: Instructions,
   },
+  // {
+  //   path: "/test",
+  //   name: "test",
+  //   component: Test,
+  // },
   {
     path: "/instructions",
     name: "instructions",
