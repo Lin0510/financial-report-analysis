@@ -132,40 +132,22 @@
       </div>
     </div>
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>
-          <el-button
-            plain
-            @click="dialogTableVisible = true"
-            size="large"
-            type="warning"
-            :icon="WarnTriangleFilled"
-          >
-            MorningStar 異常跳轉 Solution
-          </el-button>
-        </th>
-        <th></th>
-        <th>
-          <button
-            class="btn btn-outline-success btn-sm"
-            @click="openUrls()"
-            :disabled="isDisabled"
-          >
-            <span
-              v-if="isLoading"
-              class="spinner-border spinner-border-sm"
-              style="margin-right: 10px"
-            />
-            <font-awesome-icon icon="fa-window-restore" />
-            一鍵開啟財報網址
-          </button>
-        </th>
-      </tr>
-    </thead>
-  </table>
   <div class="container">
+    <div class="mt-3 mb-3" style="float: right">
+      <button
+        class="btn btn-outline-success btn-sm"
+        @click="openUrls"
+        :disabled="isDisabled"
+      >
+        <span
+          v-if="isLoading"
+          class="spinner-border spinner-border-sm"
+          style="margin-right: 10px"
+        />
+        <font-awesome-icon icon="fa-window-restore" />
+        一鍵開啟財報網址
+      </button>
+    </div>
     <el-table
       :data="tableData"
       style="width: 100%; margin-top: 20px"
