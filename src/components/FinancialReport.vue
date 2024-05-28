@@ -1,28 +1,4 @@
 <template>
-  <el-dialog v-model="dialogTableVisible" title="解決方法" width="1000">
-    如果輸入完股票代碼後，點擊 MorningStar
-    網址沒辦法直接跳轉到該股票公司數據頁面， 這邊需要前往這個網站<a
-      style="text-decoration: none"
-      target="_blank"
-      href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/"
-    >
-      cors-anywhere</a
-    >， 並點擊 Request temporary access to the demo server，點選完之後會跳出 You
-    currently have temporary access to the demo server.， 此時 MorningStar
-    網址就可以正常跳轉了
-  </el-dialog>
-  <el-dialog v-model="errorVisible" title="cors錯誤" width="1000">
-    MorningStar 無法導向 {{ stock }} 股票代碼的頁面，若要成功導向
-    {{ stock }} 股票代碼頁面 請前往這個網站
-    <a
-      style="text-decoration: none"
-      target="_blank"
-      href="https://cors-anywhere.herokuapp.com/https://www.morningstar.com/"
-      >cors-anywhere</a
-    >， 並點擊 Request temporary access to the demo server，點選完之後會跳出 You
-    currently have temporary access to the demo server.， 現在查詢 MorningStar
-    就可以導向 {{ stock }} 股票代碼的頁面了
-  </el-dialog>
   <div class="mt-3 container" v-if="!isEdit">
     <div class="row justify-content-center">
       <div class="col-md-4 col-sm-10">
@@ -250,7 +226,6 @@ import Papa from "papaparse";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import { Eleme } from "@element-plus/icons-vue";
-import Modal from "./Modal.vue";
 import axios from "axios";
 
 // =======================================================================
@@ -1241,5 +1216,8 @@ function exportToCSV() {
 }
 .el-input.is-error {
   border-color: red;
+}
+:deep(.el-scrollbar__bar.is-horizontal) {
+  height: 0 !important;
 }
 </style>
