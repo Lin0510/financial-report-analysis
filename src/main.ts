@@ -24,6 +24,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import VueNumberFormat from "@coders-tm/vue-number-format";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import "./services/firebase.js"; 
 
 library.add(faRotateLeft);
 library.add(faCheck);

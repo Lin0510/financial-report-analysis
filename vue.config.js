@@ -1,6 +1,6 @@
-module.exports = {
-  publicPath:
-    process.env.NODE_ENV === "production" ? "/financial-report-analysis/" : "/",
+const { defineConfig } = require("@vue/cli-service");
+module.exports = defineConfig({
+  transpileDependencies: true,
   devServer: {
     proxy: {
       "/api": {
@@ -12,4 +12,4 @@ module.exports = {
       },
     },
   },
-};
+});

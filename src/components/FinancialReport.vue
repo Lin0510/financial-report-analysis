@@ -572,16 +572,10 @@ function edit() {
 
 const dialogTableVisible = ref(false);
 const errorVisible = ref(false);
-// 查詢morningStar網址，xnas/xnys/bats
+// 查詢morningStar網址，xnas/xnys/bats/pinx
 async function checkURL(url: string) {
   try {
-    // 開發環境使用
-    // const response = await fetch("/api" + url, { method: "HEAD" });
-    const response = await fetch(
-      "https://cors-anywhere.herokuapp.com/https://www.morningstar.com/stocks" +
-        url,
-      { method: "HEAD" }
-    );
+    const response = await fetch("/api" + url, { method: "HEAD" });
     if (response.ok) {
       return true;
     } else {
